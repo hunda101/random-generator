@@ -30,56 +30,63 @@ public:
 
 struct Interval {
 private:
-    double left_bracket_;
-    double right_bracket_;
+    double left_edge_;
+    double right_edge_;
     bool square_left_;
     bool square_right_;
-    vector<long long> numbers_inside_;
+    vector<double> numbers_inside_;
     float frequency_;
 public:
-    Interval() : left_bracket_(0), right_bracket_(0), square_left_(false),  square_right_(false) {};
+    Interval() : left_edge_(0), right_edge_(0), square_left_(false),  square_right_(false) {};
     Interval(double left_bracket, double right_bracket, bool square_left, bool square_right)
-    : left_bracket_(left_bracket), right_bracket_(right_bracket), square_left_(square_left), square_right_(square_right){
+    : left_edge_(left_bracket), right_edge_(right_bracket), square_left_(square_left), square_right_(square_right){
         
     }
     bool includes(double number) {
-        if (number < left_bracket_ || number > right_bracket_) {
+        if (number < left_edge_ || number > right_edge_) {
             return false;
         }
         
-        if (number == left_bracket_ && !square_left_) {
+        if (number == left_edge_ && !square_left_) {
             return false;
         }
         
-        if (number == right_bracket_ && !square_right_) {
+        if (number == right_edge_ && !square_right_) {
             return false;
         }
-        this->numbers_inside_.push_back(number);
+        
         return true;
     }
-    void setFrequency(long long m){
-        this->frequency_ = this->numbers_inside_.size()/static_cast<float>(m);
+    void intervalPushNumber(double number){
+        if(this->includes(number)){
+            this->numbers_inside_.push_back(number);
+        }
     }
-    double returnFrequency(){
-        return this->frequency_;
+    vector<double> returnIntervalNumbers(){
+        return this->numbers_inside_;
     }
     unsigned long returnSize(){
         return this->numbers_inside_.size();
     }
-    vector<long long> returnNumberInside(){
-        return this->numbers_inside_;
+    void setFrequency(long long m){
+        this->frequency_ = this->numbers_inside_.size()/static_cast<float>(m);
     }
+    
+    double returnFrequency(){
+        return this->frequency_;
+    }
+    
     bool returnSquareLeft(){
         return this->square_left_;
     }
     bool returnSquareRight(){
         return this->square_right_;
     }
-    double returnLeftBracket(){
-        return this->left_bracket_;
+    double returnLeftEdge(){
+        return this->left_edge_;
     }
-    double returnRightBracket(){
-        return this->right_bracket_;
+    double returnRightEdge(){
+        return this->right_edge_;
     }
 };
 
@@ -93,7 +100,7 @@ public:
     }
     vector<Interval> makeIntervals(){
         vector<Interval> intervals;
-        for(int i = 0; i<10; i++){
+        for(int i = 0; i<extremes_.size()-1; i++){
             intervals.push_back(i == 0 ? Interval(extremes_[i], extremes_[i+1], true, true): Interval(extremes_[i], extremes_[i+1], false, true)) ;
         }
         return intervals;
@@ -142,18 +149,15 @@ public:
 };
 
 
-class ResultingEvenlyBase: public GeneratorBase {
+class EvenlyBase: public GeneratorBase {
 public:
-    void isIncluded(vector<tuple<long long, float, long long>> result, long long m){
+    void isIncluded(vector<tuple<long long, float, float>> result, long long m){
         vector<double> decades = IntervalDivider(0, 100, 10).divideIntervals();
         vector<Interval> intervals_decades = IntervalMaker(decades).makeIntervals();
         for(auto& tuple: result){
             double number = get<2>(tuple);
             for(auto&  Interval : intervals_decades){
-                if (Interval.includes(number)){
-                    
-                    break;
-                }
+                Interval.intervalPushNumber(number);
             }
             for(auto& Interval : intervals_decades){
                 Interval.setFrequency(m);
@@ -167,14 +171,14 @@ public:
         for(auto&  Interval : intervals){
             char leftBracket = Interval.returnSquareLeft() ? '[' : '(';
             char rightBracket = Interval.returnSquareRight() ? ']' : ')';
-            cout << "\t"<< leftBracket << Interval.returnLeftBracket() << ", " << Interval.returnRightBracket() << rightBracket  << "\t"<< Interval.returnFrequency() << endl;
+            cout << "\t"<< leftBracket << Interval.returnLeftEdge() << ", " << Interval.returnRightEdge() << rightBracket  << "\t"<< Interval.returnFrequency() << endl;
         }
     }
     
 };
 
 
-class LinearCongruentialMethod: public ResultingEvenlyBase {
+class LinearCongruentialMethod: public EvenlyBase {
 private:
     const long long m_;
     
@@ -186,7 +190,7 @@ public:
     void linearCongruentialMethod() {
         long X0=1, X1;
         const int a = 2, c = 3 ;
-        vector<tuple<long long, float, long long>> linearCongruentialMethod_vector;
+        vector<tuple<long long, float, float>> linearCongruentialMethod_vector;
         linearCongruentialMethod_vector.push_back(make_tuple(X0,
                                                             static_cast<float>(X0) / static_cast<float>(m_-1), static_cast<float>(X0) / static_cast<float>(m_-1) * 100
                                                             ));
@@ -198,12 +202,12 @@ public:
                                                                 static_cast<float>(X1) / static_cast<float>(m_-1) * 100
                                                                 ));
         }
-        ResultingEvenlyBase::isIncluded(linearCongruentialMethod_vector, m_);
+        EvenlyBase::isIncluded(linearCongruentialMethod_vector, m_);
     }
 };
 
 
-class QuadraticCongruentialMethod: public ResultingEvenlyBase {
+class QuadraticCongruentialMethod: public EvenlyBase {
 private:
     const long long m_;
     
@@ -213,7 +217,7 @@ public:
     void quadraticCongruentialMethod(){
         long long X0 = 13, X1= 0;
         int a = 6  , c = 3 , d = 1;
-        vector<tuple<long long, float, long long>> quadraticCongruentialMethod_vector;
+        vector<tuple<long long, float, float>> quadraticCongruentialMethod_vector;
         quadraticCongruentialMethod_vector.push_back(make_tuple(X0,
                                                                static_cast<float>(X0) / static_cast<float>(m_-1), static_cast<float>(X0) / static_cast<float>(m_-1) * 100
                                                                ));
@@ -225,12 +229,12 @@ public:
                                                                    static_cast<float>(X1) / static_cast<float>(m_-1) * 100
                                                                    ));
         }
-        ResultingEvenlyBase::isIncluded(quadraticCongruentialMethod_vector, m_);
+        EvenlyBase::isIncluded(quadraticCongruentialMethod_vector, m_);
     }
 };
 
 
-class FibonachiNumbersMethod: public ResultingEvenlyBase {
+class FibonachiNumbersMethod: public EvenlyBase {
 private:
     const long long m_;
     
@@ -240,7 +244,7 @@ public:
     : m_(m){}
     void fibonachiNumbersMethod(){
         long long X1= 0 % m_, X2 = 1 % m_, X3 = 0;
-        vector<tuple<long long, float, long long>> fibonachiNumbersMethod_vector;
+        vector<tuple<long long, float, float>> fibonachiNumbersMethod_vector;
         fibonachiNumbersMethod_vector.push_back(make_tuple(X1,
                                                           static_cast<float>(X1) / static_cast<float>(m_-1), static_cast<float>(X1) / static_cast<float>(m_-1) * 100
                                                           ));
@@ -257,12 +261,12 @@ public:
                                                               static_cast<float>(X3) / static_cast<float>(m_-1) * 100
                                                               ));
         }
-        ResultingEvenlyBase::isIncluded(fibonachiNumbersMethod_vector, m_);
+        EvenlyBase::isIncluded(fibonachiNumbersMethod_vector, m_);
     }
 };
 
 
-class InverseCongruentialMethod: public ResultingEvenlyBase {
+class InverseCongruentialMethod: public EvenlyBase {
 private:
     const long long m_;
     
@@ -273,7 +277,7 @@ public:
     void inverseCongruentialMethod(){
         long long X0= 1, X1= 0;
         const int a = 2, c = 3, p = 997;
-        vector<tuple<long long, float, long long>> inverseCongruentialMethod_vector;
+        vector<tuple<long long, float, float>> inverseCongruentialMethod_vector;
         inverseCongruentialMethod_vector.push_back(make_tuple(X0,
                                                              static_cast<float>(X0) / static_cast<float>(m_-1), static_cast<float>(X0) / static_cast<float>(m_-1) * 100
                                                              ));
@@ -285,24 +289,24 @@ public:
                                                                  static_cast<float>(X1) / static_cast<float>(m_-1) * 100
                                                                  ));
         }
-        ResultingEvenlyBase::isIncluded(inverseCongruentialMethod_vector, m_);
+        EvenlyBase::isIncluded(inverseCongruentialMethod_vector, m_);
         
     }
 };
 
 
-class UnionMethod: public FibonachiNumbersMethod{
+class UnionMethod: public EvenlyBase{
 private:
-    long m_;
+    const long long m_;
 public:
     UnionMethod(long m)
-    : FibonachiNumbersMethod(static_cast<long long>(m)), m_(m) {
+    : m_(m) {
         
     }
     
     void unionMethod() {
         long long X0 = 6, Y0 = 1, X1, Y1, Z ;
-        vector<tuple<long long, float, long long>> unionMethod_vector;
+        vector<tuple<long long, float, float>> unionMethod_vector;
         
         for (int i = 0; i < m_; ++i) {
             X1 = LCM(m_, X0, 4, 6);
@@ -319,7 +323,7 @@ public:
                                                    static_cast<float>(Z) / static_cast<float>(m_-1) * 100
                                                    ));
         }
-        ResultingEvenlyBase::isIncluded(unionMethod_vector, m_);
+        EvenlyBase::isIncluded(unionMethod_vector, m_);
     }
 };
 
@@ -355,7 +359,7 @@ public:
         for(auto&  Interval : intervals_normal){
             char leftBracket = Interval.returnSquareLeft() ? '[' : '(';
             char rightBracket = Interval.returnSquareRight() ? ']' : ')';
-            cout << "\t"<< leftBracket << Interval.returnLeftBracket() << ", " << Interval.returnRightBracket() << rightBracket  << "\t"<< Interval.returnSize()/static_cast<float>(m) << endl;
+            cout << "\t"<< leftBracket << Interval.returnLeftEdge() << ", " << Interval.returnRightEdge() << rightBracket  << "\t"<< Interval.returnSize()/static_cast<float>(m) << endl;
         }
     }
 };
@@ -395,7 +399,7 @@ class ArensMethod{};
 int main() {
     print_menu();
     int type;
-    long long m = 100000;
+    long long m = 1000;
     cin >> type;
     
     switch (type) {
