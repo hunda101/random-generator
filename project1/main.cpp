@@ -469,13 +469,49 @@ public:
             Y0 = Y1;
             U0 = static_cast<float>(Y1)/static_cast<float>(m_);
             X = -95*log(U0);
-            cout<< X << " " << endl;
             logarithmMethod_vector.push_back(X);
         }
         EvenlyBase::isIncluded(logarithmMethod_vector, m_);
     }
 };
-class ArensMethod{};
+class ArensMethod: public EvenlyBase {
+private:
+    const long long m_;
+    
+    
+public:
+    ArensMethod(long m)
+    : m_(m){}
+    
+    void arensMethod() {
+        long Z0=1, Z1, numSkipped= 0, H0=3, H1;
+        const int a= 70;
+        float U0, X,Y, V0 ;
+        vector<float> arensMethod_vector;
+        
+        for (int i = 1; i < m_+numSkipped; ++i) {
+            Z1 = LCM(m_, Z0, 2, 3);
+            Z0 = Z1;
+            U0 = static_cast<float>(Z1)/static_cast<float>(m_);
+            Y = tan(M_PI*U0);
+            X=sqrt(2*a-1)*Y+a-1;
+            if(X<=0){
+                numSkipped+=1;
+                continue;
+            }
+            H1 = LCM(m_, H0, 2, 3);
+            H0 = H1;
+            V0 = static_cast<float>(H1)/static_cast<float>(m_);
+            cout<< X << " " << endl;
+            if (V0 > ((1+Y*Y)*exp(((a-1)*log(X/(a-1)-sqrt(2*a-1)*Y))))){
+                numSkipped+=1;
+                continue;
+            }
+            arensMethod_vector.push_back(X);
+        }
+        EvenlyBase::isIncluded(arensMethod_vector, m_);
+    }
+};
 int main() {
     print_menu();
     int type;
@@ -536,7 +572,8 @@ int main() {
             
         }
         case 10:{
-            //code
+            ArensMethod generator(m);
+            generator.arensMethod();
             break;
             
         }
