@@ -10,7 +10,7 @@ void print_menu();
 struct IntervalDivider {
 private:
     double left_edge_, right_edge_;
-    int n_;
+    unsigned int n_;
     
 public:
     IntervalDivider(double left_edge, double right_edge, int n): left_edge_(left_edge), right_edge_(right_edge), n_(n){
@@ -404,7 +404,52 @@ public:
 
     }
 };
-class RelationMethod{};
+class RelationMethod: public NormalBase{
+private:
+    long long m_;
+    
+public:
+    RelationMethod(long m)
+    : m_(m){}
+    void relationMethod(){
+        long Y1 = 1, Y2 = 2, Y3, Y4, numSkipped= 0;
+        float U1, V1, X;
+        vector<float> relationMethod_vector;
+        for(int i = 0; i < m_/2+numSkipped; ++i){
+            
+            Y3 = LCM(m_, Y1, 6, 7);
+            Y4 = LCM(m_, Y2, 2, 3);
+            Y1 = Y3;
+            Y2 = Y4;
+            U1 = static_cast<float>(Y3)/static_cast<float>(m_);
+            V1 = static_cast<float>(Y4)/static_cast<float>(m_);
+            if(U1 == 0) {
+                numSkipped+=1;
+                continue;
+                
+            }
+            V1 = static_cast<float>(Y4)/static_cast<float>(m_);
+            X = sqrt(8.0/exp(1))*((V1-0.5)/U1);
+            
+            if(X*X <= 5-4*exp(0.25)*U1){
+                relationMethod_vector.push_back(X);
+                continue;
+            }
+            else if (X*X >= ((4*exp(-1.35)/U1)+1.4)){
+                numSkipped+=1;
+                continue;
+            }else if(X*X <= -4*log(U1)){
+                relationMethod_vector.push_back(X);
+                
+            }else{
+                numSkipped+=1;
+            }
+            
+        }
+        NormalBase::isIncluded(relationMethod_vector, m_);
+
+    }
+};
 class LogarithmMethod{};
 class ArensMethod{};
 int main() {
@@ -455,7 +500,8 @@ int main() {
             break;
         }
         case 8:{
-            //code
+            RelationMethod generator(m);
+            generator.relationMethod();
             break;
             
         }
