@@ -450,7 +450,31 @@ public:
 
     }
 };
-class LogarithmMethod{};
+class LogarithmMethod: public EvenlyBase {
+private:
+    const long long m_;
+    
+    
+public:
+    LogarithmMethod(long m)
+    : m_(m){}
+    
+    void logarithmMethod() {
+        long Y0=1, Y1;
+        float U0, X;
+        vector<float> logarithmMethod_vector;
+        
+        for (int i = 1; i < m_; ++i) {
+            Y1 = LCM(m_, Y0, 2, 3);
+            Y0 = Y1;
+            U0 = static_cast<float>(Y1)/static_cast<float>(m_);
+            X = -95*log(U0);
+            cout<< X << " " << endl;
+            logarithmMethod_vector.push_back(X);
+        }
+        EvenlyBase::isIncluded(logarithmMethod_vector, m_);
+    }
+};
 class ArensMethod{};
 int main() {
     print_menu();
@@ -506,7 +530,8 @@ int main() {
             
         }
         case 9:{
-            //code
+            LogarithmMethod generator(m);
+            generator.logarithmMethod();
             break;
             
         }
