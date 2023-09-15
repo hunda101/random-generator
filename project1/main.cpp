@@ -119,20 +119,19 @@ public:
 };
 struct ValueVector{
 private:
-    long long m_;
     vector<double> vals_;
 public:
-    ValueVector(long long m) : m_(m){
+    ValueVector()  {
         
     }
-    void pushEvenlyValue(long long value){
-        this->vals_.push_back(static_cast<double>(value)/static_cast<double>(m_));
+    void pushEvenlyValue(long long value, long long m){
+        this->vals_.push_back(static_cast<double>(value)/static_cast<double>(m));
     }
     void pushValue(double value){
         this->vals_.push_back(value);
     }
-    vector<double> returnVector(){
-        return vals_;
+    unsigned long returnVectorSize(){
+        return vals_.size();
     }
     std::vector<double>::iterator begin() {
             return vals_.begin();
@@ -144,6 +143,11 @@ public:
     void insert(std::size_t position, double value) {
             if (position <= vals_.size()) {
                 vals_.insert(vals_.begin() + position, value);
+            }
+        }
+    void insert(std::size_t position, const std::vector<double>& values) {
+            if (position <= vals_.size()) {
+                vals_.insert(vals_.begin() + position, values.begin(), values.end());
             }
         }
     
@@ -225,12 +229,12 @@ public:
     
     void linearCongruentialMethod() {
         long X0=1, X1;
-        ValueVector linearCongruentialMethod_vector(m_);
-        linearCongruentialMethod_vector.pushEvenlyValue(X0);
+        ValueVector linearCongruentialMethod_vector;
+        linearCongruentialMethod_vector.pushEvenlyValue(X0, m_);
         for (int i = 1; i < m_; ++i) {
             X1 = LCM(m_, X0, 2, 3);
             X0 = X1;
-            linearCongruentialMethod_vector.pushEvenlyValue(X1);
+            linearCongruentialMethod_vector.pushEvenlyValue(X1, m_);
         }
         GeneratorBase::isIncluded(linearCongruentialMethod_vector, m_, IntervalEdges(0, 1, 10));
     }
@@ -246,12 +250,12 @@ public:
     : m_(m){}
     void quadraticCongruentialMethod(){
         long long X0 = 13, X1;
-        ValueVector quadraticCongruentialMethod_vector(m_);
-        quadraticCongruentialMethod_vector.pushEvenlyValue(X0);
+        ValueVector quadraticCongruentialMethod_vector;
+        quadraticCongruentialMethod_vector.pushEvenlyValue(X0, m_);
         for (int i = 1; i < m_; ++i) {
             X1 = QCM(m_, X0, 1, 6, 3);
             X0 = X1;
-            quadraticCongruentialMethod_vector.pushEvenlyValue(X1);
+            quadraticCongruentialMethod_vector.pushEvenlyValue(X1, m_);
         }
         GeneratorBase::isIncluded(quadraticCongruentialMethod_vector, m_, IntervalEdges(0, 1, 10));
     }
@@ -268,14 +272,14 @@ public:
     : m_(m){}
     void fibonachiNumbersMethod(){
         long long X0= 0 % m_, X1 = 1 % m_, X2 = 0;
-        ValueVector fibonachiNumbersMethod_vector(m_);
-        fibonachiNumbersMethod_vector.pushEvenlyValue(X0);
-        fibonachiNumbersMethod_vector.pushEvenlyValue(X1);
+        ValueVector fibonachiNumbersMethod_vector;
+        fibonachiNumbersMethod_vector.pushEvenlyValue(X0, m_);
+        fibonachiNumbersMethod_vector.pushEvenlyValue(X1, m_);
         for (int i = 2; i < m_; ++i) {
             X2 = FNM(m_, X0, X1);
             X0 = X1;
             X1 = X2;
-            fibonachiNumbersMethod_vector.pushEvenlyValue(X2);
+            fibonachiNumbersMethod_vector.pushEvenlyValue(X2, m_);
         }
         GeneratorBase::isIncluded(fibonachiNumbersMethod_vector, m_, IntervalEdges(0, 1, 10));
     }
@@ -292,12 +296,12 @@ public:
     : m_(m){}
     void inverseCongruentialMethod(){
         long long X0= 1, X1= 0;
-        ValueVector inverseCongruentialMethod_vector(m_);
-        inverseCongruentialMethod_vector.pushEvenlyValue(X1);
+        ValueVector inverseCongruentialMethod_vector;
+        inverseCongruentialMethod_vector.pushEvenlyValue(X1, m_);
         for (int i = 1; i < m_; ++i) {
             X1 = ICG(100003 , 2, 3, X0) ;
             X0 = X1;
-            inverseCongruentialMethod_vector.pushEvenlyValue(X1);
+            inverseCongruentialMethod_vector.pushEvenlyValue(X1, m_);
 
         }
         GeneratorBase::isIncluded(inverseCongruentialMethod_vector, m_, IntervalEdges(0, 1, 10));
@@ -317,8 +321,8 @@ public:
     
     void unionMethod() {
         long long X0 = 6, Y0 = 1, X1, Y1, Z ;
-        ValueVector unionMethod_vector(m_);
-        unionMethod_vector.pushEvenlyValue(X0-Y0);
+        ValueVector unionMethod_vector;
+        unionMethod_vector.pushEvenlyValue(X0-Y0, m_);
         for (int i = 1; i < m_; ++i) {
             X1 = LCM(m_, X0, 4, 6);
             X0 = X1;
@@ -330,7 +334,7 @@ public:
             
             Z%=m_;
             
-            unionMethod_vector.pushEvenlyValue(Z);
+            unionMethod_vector.pushEvenlyValue(Z, m_);
         }
         GeneratorBase::isIncluded(unionMethod_vector, m_, IntervalEdges(0, 1, 10));
     }
@@ -350,7 +354,7 @@ public:
     void sigmaMethod() {
         float X0;
         long Y0 = 1, Y1;
-        ValueVector sigmaMethod_vector(m_);
+        ValueVector sigmaMethod_vector;
         array<float, 12> selected_numbers;
         float sum=0;
         selected_numbers[0] = Y0/(m_-1);
@@ -381,7 +385,7 @@ public:
     void polarMehod(){
         long Y1 = 1, Y2 = 2, Y3, Y4, numSkipped= 0 ;
         float S,U1 ,U2, V1, V2, X1, X2;
-        ValueVector polarMethod_vector(m_);
+        ValueVector polarMethod_vector;
         for(int i = 0; i < m_/2 + numSkipped; ++i){
             
             Y3 = LCM(m_, Y1, 6, 7);
@@ -402,6 +406,7 @@ public:
             float expression2 = (ln)/S;
             X1 = V1*sqrt(expression1);
             X2 = V2*sqrt(expression2);
+            polarMethod_vector.insert(polarMethod_vector.returnVectorSize(), {X1, X2});
             polarMethod_vector.pushValue(X1);
             polarMethod_vector.pushValue(X2);
         }
@@ -419,7 +424,7 @@ public:
     void relationMethod(){
         long Y1 = 1, Y2 = 2, Y3, Y4, numSkipped= 0;
         float U1, V1, X;
-        ValueVector relationMethod_vector(m_);
+        ValueVector relationMethod_vector;
         for(int i = 0; i < m_/2+numSkipped; ++i){
             
             Y3 = LCM(m_, Y1, 6, 7);
@@ -470,7 +475,7 @@ public:
     void logarithmMethod() {
         long Y0=1, Y1;
         float U0, X;
-        ValueVector logarithmMethod_vector(m_);
+        ValueVector logarithmMethod_vector;
         
         for (int i = 1; i < m_; ++i) {
             Y1 = LCM(m_, Y0, 2, 3);
@@ -495,7 +500,7 @@ public:
         long Z0=1, Z1, numSkipped= 0, H0=3, H1;
         const int a= 70;
         float U0, X,Y, V0 ;
-        ValueVector arensMethod_vector(m_);
+        ValueVector arensMethod_vector;
         
         for (int i = 1; i < m_+numSkipped; ++i) {
             Z1 = LCM(m_, Z0, 2, 3);
