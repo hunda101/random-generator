@@ -1,4 +1,5 @@
 #include <iostream>
+#include <math.h>
 
 using namespace std;
 
@@ -351,7 +352,7 @@ public:
         selected_numbers[0] = Y0/(m_-1);
         for (int i = 0; i < m_; ++i) {
             for(int i = 0; i < 12; ++i){
-                Y1 = LCM(m_, Y0, 2, 3);
+                Y1 = LCM(m_, Y0, 6, 7);
                 Y0 = Y1;
                 selected_numbers[i] = static_cast<float>(Y1)/static_cast<float>(m_-1);
                 sum += selected_numbers[i];
@@ -371,8 +372,36 @@ private:
     long long m_;
     
 public:
-    void PolarMehod(){
-        cout << 2;
+    PolarMethod(long m)
+    : m_(m){}
+    void polarMehod(){
+        long Y1 = 1, Y2 = 2, Y3, Y4, numSkipped= 0 ;
+        float S,U1 ,U2, V1, V2, X1, X2;
+        vector<float> polarMethod_vector;
+        for(int i = 0; i < m_/2 + numSkipped; ++i){
+            
+            Y3 = LCM(m_, Y1, 6, 7);
+            Y4 = LCM(m_, Y2, 2, 3);
+            Y1 = Y3;
+            Y2 = Y4;
+            U1 = static_cast<float>(Y3)/static_cast<float>(m_);
+            U2 = static_cast<float>(Y4)/static_cast<float>(m_);
+            V1 = 2*U1-1;
+            V2 = 2*U2-1;
+            S = V1*V1 + V2*V2;
+            if(S > 1){
+                numSkipped+=1;
+                continue;
+            };
+            float ln = -2*log(S);
+            float expression1 = (ln)/S;
+            float expression2 = (ln)/S;
+            X1 = V1*sqrt(expression1);
+            X2 = V2*sqrt(expression2);
+            polarMethod_vector.insert(polarMethod_vector.end(), {X1, X2});
+        }
+        NormalBase::isIncluded(polarMethod_vector, m_);
+
     }
 };
 class RelationMethod{};
@@ -421,7 +450,8 @@ int main() {
         }
         case 7:
         {
-            //code
+            PolarMethod generator(m);
+            generator.polarMehod();
             break;
         }
         case 8:{
