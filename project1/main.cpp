@@ -15,8 +15,8 @@ public:
     IntervalDivider(double left_edge, double right_edge, int n): left_edge_(left_edge), right_edge_(right_edge), n_(n){
         
     }
-    vector<double> divideIntervals(){
-        vector<double> extremes;
+    vector<float> divideIntervals(){
+        vector<float> extremes;
         double step = (right_edge_ - left_edge_) / (double)(n_);
         for(int i = 0; i <= n_; i++){
             double value = left_edge_ + i * step;
@@ -93,9 +93,9 @@ public:
 
 struct IntervalMaker{
 private:
-    vector<double> extremes_;
+    vector<float> extremes_;
 public:
-    IntervalMaker(vector<double >extremes): extremes_(extremes){
+    IntervalMaker(vector<float>extremes): extremes_(extremes){
         
     }
     vector<Interval> makeIntervals(){
@@ -119,18 +119,18 @@ public:
     long long FNM(long long m, long long X1, long long X2 ){
         return (X1 + X2)%m;
     }
-    long long mod_inv(long long param, long long n)
+    long long mod_inv(long long param, long long m)
     {
-        long long b0 = n, t, q;
+        long long b0 = m, t, q;
         long long x0 = 0, x1 = 1;
         if(param==0) return INT_MAX;
         else if(param == INT_MAX) return 0 ;
-        if (n == 1) return 1;
+        if (m == 1) return 1;
         while (param > 1)
         {
-            q = param / n;
-            t = n;
-            n = param % n;
+            q = param / m;
+            t = m;
+            m = param % m;
             param = t;
             t = x0;
             x0 = x1 - q * x0;
@@ -141,30 +141,10 @@ public:
         return x1;
     }
     
-    long long ICG(long long n, int a, int c, long long param)
+    long long ICG(long long m, int a, int c, long long param)
     {
         if (param == 0) return c;
-        return (a * mod_inv(param, n) + c) % n;
-    }
-};
-
-
-class EvenlyBase: public GeneratorBase {
-public:
-    void isIncluded(vector<tuple<long long, float, float>> result, long long m){
-        vector<double> decades = IntervalDivider(0, 100, 10).divideIntervals();
-        vector<Interval> intervals_decades = IntervalMaker(decades).makeIntervals();
-        for(auto& tuple: result){
-            double number = get<2>(tuple);
-            for(auto&  Interval : intervals_decades){
-                Interval.intervalPushNumber(number);
-            }
-            for(auto& Interval : intervals_decades){
-                Interval.setFrequency(m);
-            }
-        }
-            
-        printResult(intervals_decades);
+        return (a * mod_inv(param, m) + c) % m;
     }
     void printResult(vector<Interval> intervals){
         cout << "\t"<< "Інтервал"<< "\t" << "Частота"<< endl;
@@ -174,6 +154,27 @@ public:
             cout << "\t"<< leftBracket << Interval.returnLeftEdge() << ", " << Interval.returnRightEdge() << rightBracket  << "\t"<< Interval.returnFrequency() << endl;
         }
     }
+};
+
+
+class EvenlyBase: public GeneratorBase {
+public:
+    void isIncluded(vector<float> result, long long m){
+        vector<float> decades = IntervalDivider(0, 100, 10).divideIntervals();
+        vector<Interval> intervals_decades = IntervalMaker(decades).makeIntervals();
+        for(auto& num: result){
+            double number = num;
+            for(auto&  Interval : intervals_decades){
+                Interval.intervalPushNumber(number);
+            }
+            for(auto& Interval : intervals_decades){
+                Interval.setFrequency(m);
+            }
+        }
+        
+        printResult(intervals_decades);
+    }
+    
     
 };
 
@@ -189,18 +190,14 @@ public:
     
     void linearCongruentialMethod() {
         long X0=1, X1;
-        const int a = 2, c = 3 ;
-        vector<tuple<long long, float, float>> linearCongruentialMethod_vector;
-        linearCongruentialMethod_vector.push_back(make_tuple(X0,
-                                                            static_cast<float>(X0) / static_cast<float>(m_-1), static_cast<float>(X0) / static_cast<float>(m_-1) * 100
-                                                            ));
+        vector<float> linearCongruentialMethod_vector;
+        linearCongruentialMethod_vector.push_back(static_cast<float>(X0)/
+                                                  static_cast<float>(m_-1) * 100);
         for (int i = 1; i < m_; ++i) {
-            X1 = LCM(m_, X0, a, c);
+            X1 = LCM(m_, X0, 2, 3);
             X0 = X1;
-            linearCongruentialMethod_vector.push_back(make_tuple(X1,
-                                                                static_cast<float>(X1) / static_cast<float>(m_-1),
-                                                                static_cast<float>(X1) / static_cast<float>(m_-1) * 100
-                                                                ));
+            linearCongruentialMethod_vector.push_back(static_cast<float>(X1)/
+                                                      static_cast<float>(m_-1) * 100);
         }
         EvenlyBase::isIncluded(linearCongruentialMethod_vector, m_);
     }
@@ -216,18 +213,14 @@ public:
     : m_(m){}
     void quadraticCongruentialMethod(){
         long long X0 = 13, X1= 0;
-        int a = 6  , c = 3 , d = 1;
-        vector<tuple<long long, float, float>> quadraticCongruentialMethod_vector;
-        quadraticCongruentialMethod_vector.push_back(make_tuple(X0,
-                                                               static_cast<float>(X0) / static_cast<float>(m_-1), static_cast<float>(X0) / static_cast<float>(m_-1) * 100
-                                                               ));
+        vector<float> quadraticCongruentialMethod_vector;
+        quadraticCongruentialMethod_vector.push_back(static_cast<float>(X0)/
+                                                     static_cast<float>(m_-1) * 100);
         for (int i = 1; i < m_; ++i) {
-            X1 = QCM(m_, X0, X1, d, a, c);
+            X1 = QCM(m_, X0, X1, 1, 6, 3);
             X0 = X1;
-            quadraticCongruentialMethod_vector.push_back(make_tuple(X1,
-                                                                   static_cast<float>(X1) / static_cast<float>(m_-1),
-                                                                   static_cast<float>(X1) / static_cast<float>(m_-1) * 100
-                                                                   ));
+            quadraticCongruentialMethod_vector.push_back(static_cast<float>(X1)
+                                                         /static_cast<float>(m_-1) * 100);
         }
         EvenlyBase::isIncluded(quadraticCongruentialMethod_vector, m_);
     }
@@ -243,23 +236,18 @@ public:
     FibonachiNumbersMethod(long m)
     : m_(m){}
     void fibonachiNumbersMethod(){
-        long long X1= 0 % m_, X2 = 1 % m_, X3 = 0;
-        vector<tuple<long long, float, float>> fibonachiNumbersMethod_vector;
-        fibonachiNumbersMethod_vector.push_back(make_tuple(X1,
-                                                          static_cast<float>(X1) / static_cast<float>(m_-1), static_cast<float>(X1) / static_cast<float>(m_-1) * 100
-                                                          ));
-        fibonachiNumbersMethod_vector.push_back(make_tuple(X2,
-                                                          static_cast<float>(X2) / static_cast<float>(m_-1)
-                                                          , static_cast<float>(X2) / static_cast<float>(m_-1) * 100
-                                                          ));
+        long long X0= 0 % m_, X1 = 1 % m_, X2 = 0;
+        vector<float> fibonachiNumbersMethod_vector;
+        fibonachiNumbersMethod_vector.push_back(static_cast<float>(X0)/
+                                                static_cast<float>(m_-1) * 100);
+        fibonachiNumbersMethod_vector.push_back(static_cast<float>(X1)/
+                                                static_cast<float>(m_-1)* 100);
         for (int i = 2; i < m_; ++i) {
-            X3 = FNM(m_, X1, X2);
+            X2 = FNM(m_, X0, X1);
+            X0 = X1;
             X1 = X2;
-            X2 = X3;
-            fibonachiNumbersMethod_vector.push_back(make_tuple(X3,
-                                                              static_cast<float>(X3) / static_cast<float>(m_-1),
-                                                              static_cast<float>(X3) / static_cast<float>(m_-1) * 100
-                                                              ));
+            fibonachiNumbersMethod_vector.push_back(static_cast<float>(X2)/
+                                                    static_cast<float>(m_-1) * 100);
         }
         EvenlyBase::isIncluded(fibonachiNumbersMethod_vector, m_);
     }
@@ -276,18 +264,15 @@ public:
     : m_(m){}
     void inverseCongruentialMethod(){
         long long X0= 1, X1= 0;
-        const int a = 2, c = 3, p = 997;
-        vector<tuple<long long, float, float>> inverseCongruentialMethod_vector;
-        inverseCongruentialMethod_vector.push_back(make_tuple(X0,
-                                                             static_cast<float>(X0) / static_cast<float>(m_-1), static_cast<float>(X0) / static_cast<float>(m_-1) * 100
-                                                             ));
+        vector<float> inverseCongruentialMethod_vector;
+        inverseCongruentialMethod_vector.push_back( static_cast<float>(X0) / static_cast<float>(m_-1) * 100
+                                                   );
         for (int i = 1; i < m_; ++i) {
-            X1 = ICG(p, a, c, X0) ;
+            X1 = ICG(100003 , 2, 3, X0) ;
             X0 = X1;
-            inverseCongruentialMethod_vector.push_back(make_tuple(X1,
-                                                                 static_cast<float>(X1) / static_cast<float>(m_-1),
-                                                                 static_cast<float>(X1) / static_cast<float>(m_-1) * 100
-                                                                 ));
+            inverseCongruentialMethod_vector.push_back(
+                                                       static_cast<float>(X1) / static_cast<float>(m_-1) * 100
+                                                       );
         }
         EvenlyBase::isIncluded(inverseCongruentialMethod_vector, m_);
         
@@ -306,9 +291,10 @@ public:
     
     void unionMethod() {
         long long X0 = 6, Y0 = 1, X1, Y1, Z ;
-        vector<tuple<long long, float, float>> unionMethod_vector;
+        vector<float> unionMethod_vector{static_cast<float>(X0-Y0)/
+            static_cast<float>(m_-1) * 100};
         
-        for (int i = 0; i < m_; ++i) {
+        for (int i = 1; i < m_; ++i) {
             X1 = LCM(m_, X0, 4, 6);
             X0 = X1;
             Y1 = LCM(m_/1000, Y0, 6, 7);
@@ -318,52 +304,37 @@ public:
                 Z+=m_;
             
             Z%=m_;
-            unionMethod_vector.push_back(make_tuple(Z,
-                                                   static_cast<float>(Z) / static_cast<float>(m_-1),
-                                                   static_cast<float>(Z) / static_cast<float>(m_-1) * 100
-                                                   ));
+            
+            unionMethod_vector.push_back( static_cast<float>(Z)/static_cast<float>(m_-1) * 100
+                                         );
         }
         EvenlyBase::isIncluded(unionMethod_vector, m_);
     }
 };
 
-class ResultingNormalBase: public GeneratorBase {
-private:
-    vector<Interval> makeIntervals(const vector<double> extremes){
-        vector<Interval> intervals;
-        for(int i = 0; i<10; i++){
-            intervals.push_back(i == 0 ? Interval(extremes[i], extremes[i+1], true, true): Interval(extremes[i], extremes[i+1], false, true)) ;
-        }
-        return intervals;
-    }
-    
-    
-    
-    vector<double> threes = IntervalDivider(-3, 3, 10).divideIntervals();
-    
-    vector<Interval> intervals_normal = makeIntervals(threes);
-    
-    
+
+class NormalBase: public GeneratorBase {
 public:
-    void print_result(vector<tuple<long long, float, long long>> result, long long m){
-        
-        for(auto& tuple: result){
-            double number = get<2>(tuple);
-            for(auto&  Interval : intervals_normal){
-                if (Interval.includes(number)){
-                    break;
-                }
+    void isIncluded(vector<float> result, long long m){
+        vector<float> decades = IntervalDivider(-3, 3, 12).divideIntervals();
+        vector<Interval> intervals_decades = IntervalMaker(decades).makeIntervals();
+        for(auto& number: result){
+            
+            for(auto&  Interval : intervals_decades){
+                Interval.intervalPushNumber(number);
+            }
+            for(auto& Interval : intervals_decades){
+                Interval.setFrequency(m);
             }
         }
-        cout << "\t"<< "Інтервал"<< "\t" << "Частота"<< endl;
-        for(auto&  Interval : intervals_normal){
-            char leftBracket = Interval.returnSquareLeft() ? '[' : '(';
-            char rightBracket = Interval.returnSquareRight() ? ']' : ')';
-            cout << "\t"<< leftBracket << Interval.returnLeftEdge() << ", " << Interval.returnRightEdge() << rightBracket  << "\t"<< Interval.returnSize()/static_cast<float>(m) << endl;
-        }
+        
+        printResult(intervals_decades);
     }
+    
 };
-class SigmaMethod: public ResultingNormalBase{
+
+
+class SigmaMethod: public NormalBase{
 private:
     long long m_;
     
@@ -372,34 +343,45 @@ public:
     : m_(m){}
     
     void sigmaMethod() {
-        long X0=1, X1;
-        int a = 2, c = 3;
-        vector<tuple<long long, float, long long>> linearMethod_vector, sigmaMethod_vector;
-//        array<tuple<long long, float, long long>, 12> selected_numbers;
-        linearMethod_vector.push_back(make_tuple(X0,
-                                                            static_cast<float>(X0) / static_cast<float>(m_-1), static_cast<float>(X0) / static_cast<float>(m_-1) * 100
-                                                            ));
-        for (int i = 1; i < m_; ++i) {
+        float X0;
+        long Y0 = 1, Y1;
+        vector<float> sigmaMethod_vector;
+        array<float, 12> selected_numbers;
+        float sum=0;
+        selected_numbers[0] = Y0/(m_-1);
+        for (int i = 0; i < m_; ++i) {
+            for(int i = 0; i < 12; ++i){
+                Y1 = LCM(m_, Y0, 2, 3);
+                Y0 = Y1;
+                selected_numbers[i] = static_cast<float>(Y1)/static_cast<float>(m_-1);
+                sum += selected_numbers[i];
+            }
             
-            X1 = LCM(m_, X0, a, c);
-            X0 = X1;
-            linearMethod_vector.push_back(make_tuple(X1,
-                                                                static_cast<float>(X1) / static_cast<float>(m_-1),
-                                                                static_cast<float>(X1) / static_cast<float>(m_-1) * 100
-                                                                ));
+            X0 = sum - 6;
+            sigmaMethod_vector.push_back(X0);
+            sum = 0;
+
         }
-       
-        ResultingNormalBase::print_result(sigmaMethod_vector, m_);
+        
+        NormalBase::isIncluded(sigmaMethod_vector, m_);
     }
 };
-class PolarMethod{};
+class PolarMethod: public NormalBase{
+private:
+    long long m_;
+    
+public:
+    void PolarMehod(){
+        cout << 2;
+    }
+};
 class RelationMethod{};
 class LogarithmMethod{};
 class ArensMethod{};
 int main() {
     print_menu();
     int type;
-    long long m = 1000;
+    long long m = 100000;
     cin >> type;
     
     switch (type) {
@@ -421,7 +403,7 @@ int main() {
         }
         case 4:
         {
-            InverseCongruentialMethod generator(1000);
+            InverseCongruentialMethod generator(m);
             generator.inverseCongruentialMethod();
             break;
         }
