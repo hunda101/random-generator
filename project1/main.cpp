@@ -415,10 +415,9 @@ public:
                 continue;
             };
             float ln = -2*log(S);
-            float expression1 = (ln)/S;
-            float expression2 = (ln)/S;
-            X1 = V1*sqrt(expression1);
-            X2 = V2*sqrt(expression2);
+            float expression = (ln)/S;
+            X1 = V1*sqrt(expression);
+            X2 = V2*sqrt(expression);
             polarMethod_vector.insert(polarMethod_vector.returnVectorSize(), {X1, X2});
             
         }
