@@ -1,13 +1,12 @@
 #include <iostream>
 #include <math.h>
+#include <algorithm>
+#include <limits>
 
 using namespace std;
 
 
 void print_menu();
-
-
-
 
 
 struct Interval {
@@ -78,8 +77,8 @@ private:
     bool square_right_;
 public:
     IntervalEdges(double left_edge, double right_edge, int n, bool square_left, bool square_right)
-        : Interval(left_edge, right_edge, square_left, square_right), n_(n) {}
-
+    : Interval(left_edge, right_edge, square_left, square_right), n_(n) {}
+    
     vector<float> divideIntervals() {
         vector<float> extremes;
         double step = (returnRightEdge() - returnLeftEdge()) / static_cast<double>(n_);
@@ -89,7 +88,7 @@ public:
         }
         return extremes;
     }
-
+    
     int returnSegmentsNumber() {
         return n_;
     }
@@ -104,11 +103,11 @@ public:
 };
 
 
-struct ValueVector{
+struct NumberVector{
 private:
     vector<double> vals_;
 public:
-    ValueVector()  {
+    NumberVector()  {
         
     }
     void pushEvenlyValue(long long value, long long m){
@@ -121,22 +120,22 @@ public:
         return vals_.size();
     }
     std::vector<double>::iterator begin() {
-            return vals_.begin();
-        }
-
+        return vals_.begin();
+    }
+    
     std::vector<double>::iterator end() {
-            return vals_.end();
-        }
+        return vals_.end();
+    }
     void insert(std::size_t position, double value) {
-            if (position <= vals_.size()) {
-                vals_.insert(vals_.begin() + position, value);
-            }
+        if (position <= vals_.size()) {
+            vals_.insert(vals_.begin() + position, value);
         }
+    }
     void insert(std::size_t position, const std::vector<double>& values) {
-            if (position <= vals_.size()) {
-                vals_.insert(vals_.begin() + position, values.begin(), values.end());
-            }
+        if (position <= vals_.size()) {
+            vals_.insert(vals_.begin() + position, values.begin(), values.end());
         }
+    }
     
 };
 class GeneratorBase {
@@ -178,7 +177,7 @@ public:
         if (param == 0) return c;
         return (a * mod_inv(param, m) + c) % m;
     }
-    void isIncluded(ValueVector result, long long m, IntervalEdges edges){
+    vector<Interval> isIncluded(NumberVector result, long long m, IntervalEdges edges){
         vector<float> decades = edges.divideIntervals();
         vector<Interval> intervals_decades = edges.makeIntervals(decades);
         for(auto& num: result){
@@ -190,16 +189,38 @@ public:
             }
         }
         
-        printResult(intervals_decades);
+        return intervals_decades;
     }
-    void printResult(vector<Interval> intervals){
-        cout << "\t"<< "Інтервал"<< "\t" << "Частота"<< endl;
-        for(auto&  Interval : intervals){
-            char leftBracket = Interval.returnSquareLeft() ? '[' : '(';
-            char rightBracket = Interval.returnSquareRight() ? ']' : ')';
-            cout << "\t"<< leftBracket << Interval.returnLeftEdge() << ", " << Interval.returnRightEdge() << rightBracket  << "\t"<< Interval.returnFrequency() << endl;
+    vector<Interval> makeSubInterval(vector<Interval> parent_interval, double left_edge, double right_edge){
+        vector<Interval> sub_interval;
+        for(int i = 0; i < parent_interval.size(); i++){
+            if (parent_interval[i].includes(left_edge+std::numeric_limits<float>::min())){
+                while(!parent_interval[i-1].includes(right_edge-std::numeric_limits<float>::min())){
+                    sub_interval.push_back(parent_interval[i]);
+                    i+=1;
+                    
+                };
+                break;
+            }
+        }
+        
+        return sub_interval;
+    }
+    void printResult(vector<vector<Interval>> intervalsVector){
+        
+        for(auto& intervals: intervalsVector){
+            cout << "\t"<< "Інтервал"<< "\t" << "Частота"<< endl;
+            for(size_t i = 0; i < intervals.size(); ++i){
+                char leftBracket = intervals[i].returnSquareLeft() ? '[' : '(';
+                char rightBracket = intervals[i].returnSquareRight() ? ']' : ')';
+                cout << "\t"<< leftBracket << intervals[i].returnLeftEdge() << ", " << intervals[i].returnRightEdge() << rightBracket  << "\t"<< intervals[i].returnFrequency() << endl;
+                
+            }
+            cout << "\n" << endl;
+            
         }
     }
+    
 };
 
 
@@ -216,14 +237,15 @@ public:
     
     void linearCongruentialMethod() {
         long X0=1, X1;
-        ValueVector linearCongruentialMethod_vector;
+        NumberVector linearCongruentialMethod_vector;
         linearCongruentialMethod_vector.pushEvenlyValue(X0, m_);
         for (int i = 1; i < m_; ++i) {
             X1 = LCM(m_, X0, 2, 3);
             X0 = X1;
             linearCongruentialMethod_vector.pushEvenlyValue(X1, m_);
         }
-        GeneratorBase::isIncluded(linearCongruentialMethod_vector, m_, IntervalEdges(0, 1, 10, true, true));
+        vector<Interval> vals = isIncluded(linearCongruentialMethod_vector, m_, IntervalEdges(0, 1, 10, true, true));
+        printResult(vector<vector<Interval>>{vals});
     }
 };
 
@@ -237,14 +259,15 @@ public:
     : m_(m){}
     void quadraticCongruentialMethod(){
         long long X0 = 13, X1;
-        ValueVector quadraticCongruentialMethod_vector;
+        NumberVector quadraticCongruentialMethod_vector;
         quadraticCongruentialMethod_vector.pushEvenlyValue(X0, m_);
         for (int i = 1; i < m_; ++i) {
             X1 = QCM(m_, X0, 1, 6, 3);
             X0 = X1;
             quadraticCongruentialMethod_vector.pushEvenlyValue(X1, m_);
         }
-        GeneratorBase::isIncluded(quadraticCongruentialMethod_vector, m_, IntervalEdges(0, 1, 10, true, true));
+        vector<Interval> vals = isIncluded(quadraticCongruentialMethod_vector, m_, IntervalEdges(0, 1, 10, true, true));
+        printResult(vector<vector<Interval>>{vals});
     }
 };
 
@@ -259,7 +282,7 @@ public:
     : m_(m){}
     void fibonachiNumbersMethod(){
         long long X0= 0 % m_, X1 = 1 % m_, X2 = 0;
-        ValueVector fibonachiNumbersMethod_vector;
+        NumberVector fibonachiNumbersMethod_vector;
         fibonachiNumbersMethod_vector.pushEvenlyValue(X0, m_);
         fibonachiNumbersMethod_vector.pushEvenlyValue(X1, m_);
         for (int i = 2; i < m_; ++i) {
@@ -268,7 +291,8 @@ public:
             X1 = X2;
             fibonachiNumbersMethod_vector.pushEvenlyValue(X2, m_);
         }
-        GeneratorBase::isIncluded(fibonachiNumbersMethod_vector, m_, IntervalEdges(0, 1, 10, true, true));
+        vector<Interval> vals = isIncluded(fibonachiNumbersMethod_vector, m_, IntervalEdges(0, 1, 10, true, true));
+        printResult(vector<vector<Interval>>{vals});
     }
 };
 
@@ -283,16 +307,16 @@ public:
     : m_(m){}
     void inverseCongruentialMethod(){
         long long X0= 1, X1= 0;
-        ValueVector inverseCongruentialMethod_vector;
+        NumberVector inverseCongruentialMethod_vector;
         inverseCongruentialMethod_vector.pushEvenlyValue(X1, m_);
         for (int i = 1; i < m_; ++i) {
             X1 = ICG(100003 , 2, 3, X0) ;
             X0 = X1;
             inverseCongruentialMethod_vector.pushEvenlyValue(X1, m_);
-
+            
         }
-        GeneratorBase::isIncluded(inverseCongruentialMethod_vector, m_, IntervalEdges(0, 1, 10, true, true));
-        
+        vector<Interval> vals = isIncluded(inverseCongruentialMethod_vector, m_, IntervalEdges(0, 1, 10, true, true));
+        printResult(vector<vector<Interval>>{vals});
     }
 };
 
@@ -308,7 +332,7 @@ public:
     
     void unionMethod() {
         long long X0 = 6, Y0 = 1, X1, Y1, Z ;
-        ValueVector unionMethod_vector;
+        NumberVector unionMethod_vector;
         unionMethod_vector.pushEvenlyValue(X0-Y0, m_);
         for (int i = 1; i < m_; ++i) {
             X1 = LCM(m_, X0, 4, 6);
@@ -323,7 +347,8 @@ public:
             
             unionMethod_vector.pushEvenlyValue(Z, m_);
         }
-        GeneratorBase::isIncluded(unionMethod_vector, m_, IntervalEdges(0, 1, 10, true, true));
+        vector<Interval> vals = isIncluded(unionMethod_vector, m_, IntervalEdges(0, 1, 10, true, true));
+        printResult(vector<vector<Interval>>{vals});
     }
 };
 
@@ -341,10 +366,9 @@ public:
     void sigmaMethod() {
         float X0;
         long Y0 = 1, Y1;
-        ValueVector sigmaMethod_vector;
+        NumberVector sigmaMethod_vector;
         array<float, 12> selected_numbers;
         float sum=0;
-        selected_numbers[0] = Y0/(m_-1);
         for (int i = 0; i < m_; ++i) {
             for(int i = 0; i < 12; ++i){
                 Y1 = LCM(m_, Y0, 6, 7);
@@ -356,10 +380,12 @@ public:
             X0 = sum - 6;
             sigmaMethod_vector.pushValue(X0);
             sum = 0;
-
+            
         }
         
-        GeneratorBase::isIncluded(sigmaMethod_vector, m_, IntervalEdges(-3, 3, 12, true, true));
+        vector<Interval> vals = isIncluded(sigmaMethod_vector, m_, IntervalEdges(-3, 3, 12, true, true));
+        vector<Interval> sub_interval = makeSubInterval(vals, 0, 1);
+        printResult(vector<vector<Interval>>{vals, sub_interval});
     }
 };
 class PolarMethod: public GeneratorBase{
@@ -372,7 +398,7 @@ public:
     void polarMehod(){
         long Y0 = 1, Y1 = 2, Y2, Y3, numSkipped= 0 ;
         float S,U1 ,U2, V1, V2, X1, X2;
-        ValueVector polarMethod_vector;
+        NumberVector polarMethod_vector;
         for(int i = 0; i < m_/2 + numSkipped; ++i){
             
             Y2 = LCM(m_, Y0, 6, 7);
@@ -396,8 +422,10 @@ public:
             polarMethod_vector.insert(polarMethod_vector.returnVectorSize(), {X1, X2});
             
         }
-        GeneratorBase::isIncluded(polarMethod_vector, m_, IntervalEdges(-3, 3, 12, true, true));
-
+        vector<Interval> vals = isIncluded(polarMethod_vector, m_, IntervalEdges(-3, 3, 12, true, true));
+        vector <Interval> sub_interval = makeSubInterval(vals, 0, 1);
+        printResult(vector<vector<Interval>>{vals, sub_interval});
+        
     }
 };
 class RelationMethod: public GeneratorBase{
@@ -410,8 +438,8 @@ public:
     void relationMethod(){
         long Y0 = 1, Y1 = 2, Y2, Y3, numSkipped= 0;
         float U1, V1, X;
-        ValueVector relationMethod_vector;
-        for(int i = 0; i < m_/2+numSkipped; ++i){
+        NumberVector relationMethod_vector;
+        for(int i = 0; i < m_+numSkipped; ++i){
             
             Y2 = LCM(m_, Y0, 6, 7);
             Y3 = LCM(m_, Y1, 2, 3);
@@ -442,8 +470,9 @@ public:
             }
             
         }
-        GeneratorBase::isIncluded(relationMethod_vector, m_, IntervalEdges(-3, 3, 12, true, true));
-
+        vector<Interval> vals = isIncluded(relationMethod_vector, m_, IntervalEdges(-3, 3, 12, true, true));
+        vector <Interval> sub_interval = makeSubInterval(vals, 0, 1);
+        printResult(vector<vector<Interval>>{vals, sub_interval});
     }
 };
 
@@ -461,7 +490,7 @@ public:
     void logarithmMethod() {
         long Y0=1, Y1;
         float U0, X;
-        ValueVector logarithmMethod_vector;
+        NumberVector logarithmMethod_vector;
         
         for (int i = 1; i < m_; ++i) {
             Y1 = LCM(m_, Y0, 2, 3);
@@ -470,7 +499,8 @@ public:
             X = -14*log(U0);
             logarithmMethod_vector.pushValue(X);
         }
-        GeneratorBase::isIncluded(logarithmMethod_vector, m_, IntervalEdges(0, 100, 10, true, true));
+        vector<Interval> vals = isIncluded(logarithmMethod_vector, m_, IntervalEdges(0, 100, 10, true, true));
+        printResult(vector<vector<Interval>>{vals});
     }
 };
 class ArensMethod: public GeneratorBase {
@@ -484,9 +514,9 @@ public:
     
     void arensMethod() {
         long Z0=1, Z1, numSkipped= 0, H0=3, H1;
-        const int a= 70;
+        const int a= 50;
         float U0, X,Y, V0 ;
-        ValueVector arensMethod_vector;
+        NumberVector arensMethod_vector;
         
         for (int i = 1; i < m_+numSkipped; ++i) {
             Z1 = LCM(m_, Z0, 2, 3);
@@ -507,7 +537,8 @@ public:
             }
             arensMethod_vector.pushValue(X);
         }
-        GeneratorBase::isIncluded(arensMethod_vector, m_, IntervalEdges(0, 100, 10, true, true));
+        vector<Interval> vals = isIncluded(arensMethod_vector, m_, IntervalEdges(0, 100, 10, true, true));
+        printResult(vector<vector<Interval>>{vals});
     }
 };
 int main() {
