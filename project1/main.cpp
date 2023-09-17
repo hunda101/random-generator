@@ -73,8 +73,6 @@ public:
 struct IntervalEdges : public Interval {
 private:
     int n_;
-    bool square_left_;
-    bool square_right_;
 public:
     IntervalEdges(double left_edge, double right_edge, int n, bool square_left, bool square_right)
     : Interval(left_edge, right_edge, square_left, square_right), n_(n) {}
@@ -95,7 +93,7 @@ public:
     vector<Interval> makeIntervals(vector<float>extremes){
         vector<Interval> intervals;
         for(int i = 0; i<extremes.size()-1; i++){
-            intervals.push_back(i == 0 or i == extremes.size()-2 ? Interval(extremes[i], extremes[i+1], returnSquareLeft(), returnSquareRight()): Interval(extremes[i], extremes[i+1], false, true)) ;
+            intervals.push_back(Interval(extremes[i], extremes[i+1], i == 0 ? returnSquareLeft(): false, i == extremes.size()-2 ? returnSquareRight(): true));
         }
         return intervals;
     }
@@ -117,21 +115,21 @@ public:
         this->vals_.push_back(value);
     }
     unsigned long returnVectorSize(){
-        return vals_.size();
+        return this->vals_.size();
     }
-    std::vector<double>::iterator begin() {
-        return vals_.begin();
+    vector<double>::iterator begin() {
+        return this->vals_.begin();
     }
     
-    std::vector<double>::iterator end() {
-        return vals_.end();
+    vector<double>::iterator end() {
+        return this->vals_.end();
     }
-    void insert(std::size_t position, double value) {
-        if (position <= vals_.size()) {
-            vals_.insert(vals_.begin() + position, value);
+    void insert(size_t position, double value) {
+        if (position <= this->vals_.size()) {
+            this->vals_.insert(this->vals_.begin() + position, value);
         }
     }
-    void insert(std::size_t position, const std::vector<double>& values) {
+    void insert(size_t position, const vector<double>& values) {
         if (position <= vals_.size()) {
             vals_.insert(vals_.begin() + position, values.begin(), values.end());
         }
@@ -177,7 +175,7 @@ public:
         if (param == 0) return c;
         return (a * mod_inv(param, m) + c) % m;
     }
-    vector<Interval> isIncluded(NumberVector result, long long m, IntervalEdges edges){
+    vector<Interval> populateAndCalculateFrequencies(NumberVector result, long long m, IntervalEdges edges){
         vector<float> decades = edges.divideIntervals();
         vector<Interval> intervals_decades = edges.makeIntervals(decades);
         for(auto& num: result){
@@ -194,8 +192,8 @@ public:
     vector<Interval> makeSubInterval(vector<Interval> parent_interval, double left_edge, double right_edge){
         vector<Interval> sub_interval;
         for(int i = 0; i < parent_interval.size(); i++){
-            if (parent_interval[i].includes(left_edge+std::numeric_limits<float>::min())){
-                while(!parent_interval[i-1].includes(right_edge-std::numeric_limits<float>::min())){
+            if (parent_interval[i].includes(left_edge+numeric_limits<float>::min())){
+                while(!parent_interval[i-1].includes(right_edge-numeric_limits<float>::min())){
                     sub_interval.push_back(parent_interval[i]);
                     i+=1;
                     
@@ -244,7 +242,7 @@ public:
             X0 = X1;
             linearCongruentialMethod_vector.pushEvenlyValue(X1, m_);
         }
-        vector<Interval> vals = isIncluded(linearCongruentialMethod_vector, m_, IntervalEdges(0, 1, 10, true, true));
+        vector<Interval> vals = populateAndCalculateFrequencies(linearCongruentialMethod_vector, m_, IntervalEdges(0, 1, 10, true, true));
         printResult(vector<vector<Interval>>{vals});
     }
 };
@@ -266,7 +264,7 @@ public:
             X0 = X1;
             quadraticCongruentialMethod_vector.pushEvenlyValue(X1, m_);
         }
-        vector<Interval> vals = isIncluded(quadraticCongruentialMethod_vector, m_, IntervalEdges(0, 1, 10, true, true));
+        vector<Interval> vals = populateAndCalculateFrequencies(quadraticCongruentialMethod_vector, m_, IntervalEdges(0, 1, 10, true, true));
         printResult(vector<vector<Interval>>{vals});
     }
 };
@@ -291,7 +289,7 @@ public:
             X1 = X2;
             fibonachiNumbersMethod_vector.pushEvenlyValue(X2, m_);
         }
-        vector<Interval> vals = isIncluded(fibonachiNumbersMethod_vector, m_, IntervalEdges(0, 1, 10, true, true));
+        vector<Interval> vals = populateAndCalculateFrequencies(fibonachiNumbersMethod_vector, m_, IntervalEdges(0, 1, 10, true, true));
         printResult(vector<vector<Interval>>{vals});
     }
 };
@@ -315,7 +313,7 @@ public:
             inverseCongruentialMethod_vector.pushEvenlyValue(X1, m_);
             
         }
-        vector<Interval> vals = isIncluded(inverseCongruentialMethod_vector, m_, IntervalEdges(0, 1, 10, true, true));
+        vector<Interval> vals = populateAndCalculateFrequencies(inverseCongruentialMethod_vector, m_, IntervalEdges(0, 1, 10, true, true));
         printResult(vector<vector<Interval>>{vals});
     }
 };
@@ -347,7 +345,7 @@ public:
             
             unionMethod_vector.pushEvenlyValue(Z, m_);
         }
-        vector<Interval> vals = isIncluded(unionMethod_vector, m_, IntervalEdges(0, 1, 10, true, true));
+        vector<Interval> vals = populateAndCalculateFrequencies(unionMethod_vector, m_, IntervalEdges(0, 1, 10, true, true));
         printResult(vector<vector<Interval>>{vals});
     }
 };
@@ -383,7 +381,7 @@ public:
             
         }
         
-        vector<Interval> vals = isIncluded(sigmaMethod_vector, m_, IntervalEdges(-3, 3, 12, true, true));
+        vector<Interval> vals = populateAndCalculateFrequencies(sigmaMethod_vector, m_, IntervalEdges(-3, 3, 12, true, false));
         vector<Interval> sub_interval = makeSubInterval(vals, 0, 1);
         printResult(vector<vector<Interval>>{vals, sub_interval});
     }
@@ -421,9 +419,10 @@ public:
             polarMethod_vector.insert(polarMethod_vector.returnVectorSize(), {X1, X2});
             
         }
-        vector<Interval> vals = isIncluded(polarMethod_vector, m_, IntervalEdges(-3, 3, 12, true, true));
+        vector<Interval> vals = populateAndCalculateFrequencies(polarMethod_vector, m_, IntervalEdges(-3, 3, 12, true, true));
+        vector<Interval> vals1 = populateAndCalculateFrequencies(polarMethod_vector, m_, IntervalEdges(0, 1, 10, true, true));
         vector <Interval> sub_interval = makeSubInterval(vals, 0, 1);
-        printResult(vector<vector<Interval>>{vals, sub_interval});
+        printResult(vector<vector<Interval>>{vals,vals1, sub_interval});
         
     }
 };
@@ -469,7 +468,7 @@ public:
             }
             
         }
-        vector<Interval> vals = isIncluded(relationMethod_vector, m_, IntervalEdges(-3, 3, 12, true, true));
+        vector<Interval> vals = populateAndCalculateFrequencies(relationMethod_vector, m_, IntervalEdges(-3, 3, 12, true, true));
         vector <Interval> sub_interval = makeSubInterval(vals, 0, 1);
         printResult(vector<vector<Interval>>{vals, sub_interval});
     }
@@ -498,7 +497,7 @@ public:
             X = -14*log(U0);
             logarithmMethod_vector.pushValue(X);
         }
-        vector<Interval> vals = isIncluded(logarithmMethod_vector, m_, IntervalEdges(0, 100, 10, true, true));
+        vector<Interval> vals = populateAndCalculateFrequencies(logarithmMethod_vector, m_, IntervalEdges(0, 100, 10, true, true));
         printResult(vector<vector<Interval>>{vals});
     }
 };
@@ -536,14 +535,14 @@ public:
             }
             arensMethod_vector.pushValue(X);
         }
-        vector<Interval> vals = isIncluded(arensMethod_vector, m_, IntervalEdges(0, 100, 10, true, true));
+        vector<Interval> vals = populateAndCalculateFrequencies(arensMethod_vector, m_, IntervalEdges(0, 100, 10, true, true));
         printResult(vector<vector<Interval>>{vals});
     }
 };
 int main() {
     print_menu();
     int type;
-    long long m = 100000;
+    long long m = 1000000;
     cin >> type;
     
     switch (type) {
