@@ -23,6 +23,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		8A2438D22ABA1E2900FBBFF6 /* RandomGenerators.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RandomGenerators.h; sourceTree = "<group>"; };
 		8A308FE52AB17E0100DDEA5A /* project1 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = project1; sourceTree = BUILT_PRODUCTS_DIR; };
 		8A308FE82AB17E0100DDEA5A /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -58,6 +59,7 @@
 			isa = PBXGroup;
 			children = (
 				8A308FE82AB17E0100DDEA5A /* main.cpp */,
+				8A2438D22ABA1E2900FBBFF6 /* RandomGenerators.h */,
 			);
 			path = project1;
 			sourceTree = "<group>";
