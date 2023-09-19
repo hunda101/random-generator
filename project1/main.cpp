@@ -2,6 +2,9 @@
 #include <math.h>
 #include <algorithm>
 #include <limits>
+#include <vector>
+#include <climits>
+#include <array>
 
 using namespace std;
 
@@ -51,6 +54,7 @@ public:
     }
     void setFrequency(long long m){
         this->frequency_ = this->numbers_inside_.size()/static_cast<float>(m);
+
     }
     
     double returnFrequency(){
