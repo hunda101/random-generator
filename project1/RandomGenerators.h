@@ -60,7 +60,7 @@ public:
     unsigned long returnSize(){
         return this->numbers_inside_.size();
     }
-    void setFrequency(long long m){
+    void setFrequency(long m){
         this->frequency_ = this->numbers_inside_.size()/static_cast<float>(m);
 
     }
@@ -120,7 +120,7 @@ public:
     NumberVector()  {
         
     }
-    void pushEvenlyValue(long long value, long long m){
+    void pushEvenlyValue(long value, long m){
         this->vals_.push_back(static_cast<double>(value)/static_cast<double>(m));
     }
     void pushValue(double value){
@@ -142,8 +142,8 @@ public:
         }
     }
     void insert(size_t position, const vector<double>& values) {
-        if (position <= vals_.size()) {
-            vals_.insert(vals_.begin() + position, values.begin(), values.end());
+        if (position <=  this->vals_.size()) {
+            this->vals_.insert(this->vals_.begin() + position, values.begin(), values.end());
         }
     }
     
@@ -151,19 +151,19 @@ public:
 class GeneratorBase {
     
 public:
-    long long LCM(long long m, long long X0, int a, int c){
+    long LCM(long m, long X0, int a, int c){
         return (a*X0 +c) % m;
     }
-    long long QCM(long long m, long long X0,  int d, int a, int c){
+    long QCM(long m, long X0,  int d, int a, int c){
         return (d* X0 * X0 +a *X0 + c ) % m;
     }
-    long long FNM(long long m, long long X1, long long X2 ){
+    long FNM(long m, long X1, long X2 ){
         return (X1 + X2)%m;
     }
-    long long mod_inv(long long param, long long m)
+    long mod_inv(long param, long m)
     {
-        long long b0 = m, t, q;
-        long long x0 = 0, x1 = 1;
+        long b0 = m, t, q;
+        long x0 = 0, x1 = 1;
         if(param==0) return INT_MAX;
         else if(param == INT_MAX) return 0 ;
         if (m == 1) return 1;
@@ -182,12 +182,12 @@ public:
         return x1;
     }
     
-    long long ICG(long long m, int a, int c, long long param)
+    long ICG(long m, int a, int c, long param)
     {
         if (param == 0) return c;
         return (a * mod_inv(param, m) + c) % m;
     }
-    vector<Interval> populateAndCalculateFrequencies(NumberVector result, long long m, IntervalEdges edges){
+    vector<Interval> populateAndCalculateFrequencies(NumberVector result, long m, IntervalEdges edges){
         vector<float> decades = edges.divideIntervals();
         vector<Interval> intervals_decades = edges.makeIntervals(decades);
         for(auto& num: result){
@@ -203,7 +203,7 @@ public:
     }
     vector<Interval> makeSubInterval(vector<Interval> parent_interval, double left_edge, double right_edge){
         vector<Interval> sub_interval;
-        for(int i = 0; i < parent_interval.size(); i++){
+        for(size_t i = 0; i < parent_interval.size(); i++){
             if (parent_interval[i].includes(left_edge+numeric_limits<float>::min())){
                 while(!parent_interval[i-1].includes(right_edge-numeric_limits<float>::min())){
                     sub_interval.push_back(parent_interval[i]);
@@ -220,10 +220,10 @@ public:
         
         for(auto& intervals: intervalsVector){
             cout << "\t"<< "Інтервал"<< "\t" << "Частота"<< endl;
-            for(size_t i = 0; i < intervals.size(); ++i){
-                char leftBracket = intervals[i].returnSquareLeft() ? '[' : '(';
-                char rightBracket = intervals[i].returnSquareRight() ? ']' : ')';
-                cout << "\t"<< leftBracket << intervals[i].returnLeftEdge() << ", " << intervals[i].returnRightEdge() << rightBracket  << "\t"<< intervals[i].returnFrequency() << endl;
+            for(auto& Interval : intervals){
+                char leftBracket = Interval.returnSquareLeft() ? '[' : '(';
+                char rightBracket = Interval.returnSquareRight() ? ']' : ')';
+                cout << "\t"<< leftBracket << Interval.returnLeftEdge() << ", " << Interval.returnRightEdge() << rightBracket  << "\t"<< Interval.returnFrequency() << endl;
                 
             }
             cout << "\n" << endl;
@@ -238,7 +238,7 @@ public:
 
 class LinearCongruentialMethod: public GeneratorBase {
 private:
-    const long long m_;
+    const long m_;
     
     
 public:
@@ -249,7 +249,7 @@ public:
         long X0=1, X1;
         NumberVector linearCongruentialMethod_vector;
         linearCongruentialMethod_vector.pushEvenlyValue(X0, m_);
-        for (int i = 1; i < m_; ++i) {
+        for (size_t i = 1; i < m_; ++i) {
             X1 = LCM(m_, X0, 2, 3);
             X0 = X1;
             linearCongruentialMethod_vector.pushEvenlyValue(X1, m_);
@@ -262,16 +262,16 @@ public:
 
 class QuadraticCongruentialMethod: public GeneratorBase {
 private:
-    const long long m_;
+    const long m_;
     
 public:
     QuadraticCongruentialMethod(long m)
     : m_(m){}
     void quadraticCongruentialMethod(){
-        long long X0 = 13, X1;
+        long X0 = 13, X1;
         NumberVector quadraticCongruentialMethod_vector;
         quadraticCongruentialMethod_vector.pushEvenlyValue(X0, m_);
-        for (int i = 1; i < m_; ++i) {
+        for (size_t i = 1; i < m_; ++i) {
             X1 = QCM(m_, X0, 1, 6, 3);
             X0 = X1;
             quadraticCongruentialMethod_vector.pushEvenlyValue(X1, m_);
@@ -284,18 +284,18 @@ public:
 
 class FibonachiNumbersMethod: public GeneratorBase {
 private:
-    const long long m_;
+    const long m_;
     
     
 public:
     FibonachiNumbersMethod(long m)
     : m_(m){}
     void fibonachiNumbersMethod(){
-        long long X0= 0 % m_, X1 = 1 % m_, X2 = 0;
+        long X0= 0 % m_, X1 = 1 % m_, X2 = 0;
         NumberVector fibonachiNumbersMethod_vector;
         fibonachiNumbersMethod_vector.pushEvenlyValue(X0, m_);
         fibonachiNumbersMethod_vector.pushEvenlyValue(X1, m_);
-        for (int i = 2; i < m_; ++i) {
+        for (size_t i = 2; i < m_; ++i) {
             X2 = FNM(m_, X0, X1);
             X0 = X1;
             X1 = X2;
@@ -309,17 +309,17 @@ public:
 
 class InverseCongruentialMethod: public GeneratorBase {
 private:
-    const long long m_;
+    const long m_;
     
     
 public:
     InverseCongruentialMethod(long m)
     : m_(m){}
     void inverseCongruentialMethod(){
-        long long X0= 1, X1= 0;
+        long X0= 1, X1= 0;
         NumberVector inverseCongruentialMethod_vector;
         inverseCongruentialMethod_vector.pushEvenlyValue(X1, m_);
-        for (int i = 1; i < m_; ++i) {
+        for (size_t i = 1; i < m_; ++i) {
             X1 = ICG(100003 , 2, 3, X0) ;
             X0 = X1;
             inverseCongruentialMethod_vector.pushEvenlyValue(X1, m_);
@@ -333,7 +333,7 @@ public:
 
 class UnionMethod: public GeneratorBase{
 private:
-    const long long m_;
+    const long m_;
 public:
     UnionMethod(long m)
     : m_(m) {
@@ -341,10 +341,10 @@ public:
     }
     
     void unionMethod() {
-        long long X0 = 6, Y0 = 1, X1, Y1, Z ;
+        long X0 = 6, Y0 = 1, X1, Y1, Z ;
         NumberVector unionMethod_vector;
         unionMethod_vector.pushEvenlyValue(X0-Y0, m_);
-        for (int i = 1; i < m_; ++i) {
+        for (size_t i = 1; i < m_; ++i) {
             X1 = LCM(m_, X0, 4, 6);
             X0 = X1;
             Y1 = LCM(m_/1000, Y0, 6, 7);
@@ -367,7 +367,7 @@ public:
 
 class SigmaMethod: public GeneratorBase{
 private:
-    long long m_;
+    long m_;
     
 public:
     SigmaMethod(long m)
@@ -379,8 +379,8 @@ public:
         NumberVector sigmaMethod_vector;
         array<float, 12> selected_numbers;
         float sum=0;
-        for (int i = 0; i < m_; ++i) {
-            for(int i = 0; i < 12; ++i){
+        for (size_t i = 0; i < m_; ++i) {
+            for(size_t i = 0; i < 12; ++i){
                 Y1 = LCM(m_, Y0, 6, 7);
                 Y0 = Y1;
                 selected_numbers[i] = static_cast<float>(Y1)/static_cast<float>(m_-1);
@@ -400,7 +400,7 @@ public:
 };
 class PolarMethod: public GeneratorBase{
 private:
-    long long m_;
+    long m_;
     
 public:
     PolarMethod(long m)
@@ -409,7 +409,7 @@ public:
         long Y0 = 1, Y1 = 2, Y2, Y3, numSkipped= 0 ;
         float S,U1 ,U2, V1, V2, X1, X2;
         NumberVector polarMethod_vector;
-        for(int i = 0; i < m_/2 + numSkipped; ++i){
+        for(size_t i = 0; i < m_/2 + numSkipped; ++i){
             
             Y2 = LCM(m_, Y0, 6, 7);
             Y3 = LCM(m_, Y1, 2, 3);
@@ -432,15 +432,14 @@ public:
             
         }
         vector<Interval> vals = populateAndCalculateFrequencies(polarMethod_vector, m_, IntervalEdges(-3, 3, 12, true, true));
-        vector<Interval> vals1 = populateAndCalculateFrequencies(polarMethod_vector, m_, IntervalEdges(0, 1, 10, true, true));
         vector <Interval> sub_interval = makeSubInterval(vals, 0, 1);
-        printResult(vector<vector<Interval>>{vals,vals1, sub_interval});
+        printResult(vector<vector<Interval>>{vals, sub_interval});
         
     }
 };
 class RelationMethod: public GeneratorBase{
 private:
-    long long m_;
+    long m_;
     
 public:
     RelationMethod(long m)
@@ -449,7 +448,7 @@ public:
         long Y0 = 1, Y1 = 2, Y2, Y3, numSkipped= 0;
         float U1, V1, X;
         NumberVector relationMethod_vector;
-        for(int i = 0; i < m_+numSkipped; ++i){
+        for(size_t i = 0; i < m_+numSkipped; ++i){
             
             Y2 = LCM(m_, Y0, 6, 7);
             Y3 = LCM(m_, Y1, 2, 3);
@@ -490,7 +489,7 @@ public:
 
 class LogarithmMethod: public GeneratorBase {
 private:
-    const long long m_;
+    const long m_;
     
     
 public:
@@ -502,7 +501,7 @@ public:
         float U0, X;
         NumberVector logarithmMethod_vector;
         
-        for (int i = 1; i < m_; ++i) {
+        for (size_t i = 1; i < m_; ++i) {
             Y1 = LCM(m_, Y0, 2, 3);
             Y0 = Y1;
             U0 = static_cast<float>(Y1)/static_cast<float>(m_);
@@ -515,7 +514,7 @@ public:
 };
 class ArensMethod: public GeneratorBase {
 private:
-    const long long m_;
+    const long m_;
     
     
 public:
@@ -528,7 +527,7 @@ public:
         float U0, X,Y, V0 ;
         NumberVector arensMethod_vector;
         
-        for (int i = 1; i < m_+numSkipped; ++i) {
+        for (size_t i = 1; i < m_+numSkipped; ++i) {
             Z1 = LCM(m_, Z0, 2, 3);
             Z0 = Z1;
             U0 = static_cast<float>(Z1)/static_cast<float>(m_);
