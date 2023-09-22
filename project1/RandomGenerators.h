@@ -99,7 +99,7 @@ public:
     }
     vector<Interval> makeIntervals(vector<double>extremes){
         vector<Interval> intervals;
-        for(int i = 0; i<extremes.size()-1; i++){
+        for(size_t i = 0; i<extremes.size()-1; i++){
             intervals.push_back(Interval(extremes[i], extremes[i+1], i == 0 ? returnSquareLeft(): false, i == extremes.size()-2 ? returnSquareRight(): true));
         }
         return intervals;
@@ -112,9 +112,7 @@ struct NumberVector{
 private:
     vector<double> vals_;
 public:
-    NumberVector()  {
-        
-    }
+    NumberVector()  {}
     void pushEvenlyValue(long long value, long long m){
         vals_.push_back(static_cast<double>(value)/static_cast<double>(m));
     }
@@ -134,6 +132,11 @@ public:
     vector<double>::iterator end() {
         return vals_.end();
     }
+    void insert(size_t position, const vector<double>& values) {
+            if (position <=  this->vals_.size()) {
+                this->vals_.insert(this->vals_.begin() + position, values.begin(), values.end());
+            }
+        }
     
 };
 class GeneratorBase {
@@ -416,8 +419,7 @@ public:
             double expression = (ln)/S;
             X1 = V1*sqrt(expression);
             X2 = V2*sqrt(expression);
-            polarMethod_vector.pushValue(X1);
-            polarMethod_vector.pushValue(X2);
+            polarMethod_vector.insert(polarMethod_vector.returnVectorSize(), {X1, X2});
             
         }
         vector<Interval> vals = calcFrequency(polarMethod_vector, m_, IntervalEdges(-3, 3, 12, true, true));
