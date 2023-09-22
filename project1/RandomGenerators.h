@@ -1,14 +1,9 @@
-//
-//  RandomGenerators.h
-//  project1
-//
-//  Created by Mark Khomenko on 19.09.2023.
-//
+
 
 #ifndef RandomGenerators_h
 #define RandomGenerators_h
 
-#pragma once // Защита от множественного включения
+#pragma once 
 
 #include <iostream>
 #include <math.h>
@@ -27,7 +22,7 @@ private:
     bool square_left_;
     bool square_right_;
     vector<double> numbers_inside_;
-    float frequency_;
+    double frequency_;
 public:
     Interval() : left_edge_(0), right_edge_(0), square_left_(false),  square_right_(false) {};
     Interval(double left_bracket, double right_bracket, bool square_left, bool square_right)
@@ -39,47 +34,47 @@ public:
             return false;
         }
         
-        if (number == left_edge_ && !square_left_) {
+        else if (number == left_edge_ && !square_left_) {
             return false;
         }
         
-        if (number == right_edge_ && !square_right_) {
+        else if (number == right_edge_ && !square_right_) {
             return false;
         }
         
         return true;
     }
     void intervalPushNumber(double number){
-        if(this->includes(number)){
-            this->numbers_inside_.push_back(number);
+        if(includes(number)){
+            numbers_inside_.push_back(number);
         }
     }
     vector<double> returnIntervalNumbers(){
-        return this->numbers_inside_;
+        return numbers_inside_;
     }
-    unsigned long returnSize(){
-        return this->numbers_inside_.size();
+    unsigned long long returnSize(){
+        return numbers_inside_.size();
     }
-    void setFrequency(long m){
-        this->frequency_ = this->numbers_inside_.size()/static_cast<float>(m);
-
+    void setFrequency(long long m){
+        frequency_ = returnSize()/static_cast<double>(m);
+        
     }
     
     double returnFrequency(){
-        return this->frequency_;
+        return frequency_;
     }
     
     bool returnSquareLeft(){
-        return this->square_left_;
+        return square_left_;
     }
     bool returnSquareRight(){
-        return this->square_right_;
+        return square_right_;
     }
     double returnLeftEdge(){
-        return this->left_edge_;
+        return left_edge_;
     }
     double returnRightEdge(){
-        return this->right_edge_;
+        return right_edge_;
     }
 };
 struct IntervalEdges : public Interval {
@@ -89,8 +84,8 @@ public:
     IntervalEdges(double left_edge, double right_edge, int n, bool square_left, bool square_right)
     : Interval(left_edge, right_edge, square_left, square_right), n_(n) {}
     
-    vector<float> divideIntervals() {
-        vector<float> extremes;
+    vector<double> divideIntervals() {
+        vector<double> extremes;
         double step = (returnRightEdge() - returnLeftEdge()) / static_cast<double>(n_);
         for (int i = 0; i <= n_; i++) {
             double value = returnLeftEdge() + i * step;
@@ -102,7 +97,7 @@ public:
     int returnSegmentsNumber() {
         return n_;
     }
-    vector<Interval> makeIntervals(vector<float>extremes){
+    vector<Interval> makeIntervals(vector<double>extremes){
         vector<Interval> intervals;
         for(int i = 0; i<extremes.size()-1; i++){
             intervals.push_back(Interval(extremes[i], extremes[i+1], i == 0 ? returnSquareLeft(): false, i == extremes.size()-2 ? returnSquareRight(): true));
@@ -120,50 +115,43 @@ public:
     NumberVector()  {
         
     }
-    void pushEvenlyValue(long value, long m){
-        this->vals_.push_back(static_cast<double>(value)/static_cast<double>(m));
+    void pushEvenlyValue(long long value, long long m){
+        vals_.push_back(static_cast<double>(value)/static_cast<double>(m));
+    }
+    void pushHundredEvenlyValue(long long value, long long m){
+        vals_.push_back(static_cast<double>(value)/static_cast<double>(m)*100);
     }
     void pushValue(double value){
-        this->vals_.push_back(value);
+        vals_.push_back(value);
     }
-    unsigned long returnVectorSize(){
-        return this->vals_.size();
+    unsigned long long returnVectorSize(){
+        return vals_.size();
     }
     vector<double>::iterator begin() {
-        return this->vals_.begin();
+        return vals_.begin();
     }
     
     vector<double>::iterator end() {
-        return this->vals_.end();
-    }
-    void insert(size_t position, double value) {
-        if (position <= this->vals_.size()) {
-            this->vals_.insert(this->vals_.begin() + position, value);
-        }
-    }
-    void insert(size_t position, const vector<double>& values) {
-        if (position <=  this->vals_.size()) {
-            this->vals_.insert(this->vals_.begin() + position, values.begin(), values.end());
-        }
+        return vals_.end();
     }
     
 };
 class GeneratorBase {
     
 public:
-    long LCM(long m, long X0, int a, int c){
+    long long LCM(long long m, long long X0, int a, int c){
         return (a*X0 +c) % m;
     }
-    long QCM(long m, long X0,  int d, int a, int c){
+    long long QCM(long long m, long long X0,  int d, int a, int c){
         return (d* X0 * X0 +a *X0 + c ) % m;
     }
-    long FNM(long m, long X1, long X2 ){
+    long long FNM(long long m, long long X1, long long X2 ){
         return (X1 + X2)%m;
     }
-    long mod_inv(long param, long m)
+    long long mod_inv(long long param, long long m)
     {
-        long b0 = m, t, q;
-        long x0 = 0, x1 = 1;
+        long long b0 = m, t, q;
+        long long x0 = 0, x1 = 1;
         if(param==0) return INT_MAX;
         else if(param == INT_MAX) return 0 ;
         if (m == 1) return 1;
@@ -182,31 +170,17 @@ public:
         return x1;
     }
     
-    long ICG(long m, int a, int c, long param)
+    long long ICG(long long m, int a, int c, long long param)
     {
         if (param == 0) return c;
         return (a * mod_inv(param, m) + c) % m;
     }
-    vector<Interval> populateAndCalculateFrequencies(NumberVector result, long m, IntervalEdges edges){
-        vector<float> decades = edges.divideIntervals();
-        vector<Interval> intervals_decades = edges.makeIntervals(decades);
-        for(auto& num: result){
-            for(auto&  Interval : intervals_decades){
-                Interval.intervalPushNumber(num);
-            }
-            for(auto& Interval : intervals_decades){
-                Interval.setFrequency(m);
-            }
-        }
-        
-        return intervals_decades;
-    }
-    vector<Interval> makeSubInterval(vector<Interval> parent_interval, double left_edge, double right_edge){
+    vector<Interval> makeSubInterval(vector<Interval> interval, double left_edge, double right_edge){
         vector<Interval> sub_interval;
-        for(size_t i = 0; i < parent_interval.size(); i++){
-            if (parent_interval[i].includes(left_edge+numeric_limits<float>::min())){
-                while(!parent_interval[i-1].includes(right_edge-numeric_limits<float>::min())){
-                    sub_interval.push_back(parent_interval[i]);
+        for(size_t i = 0; i < interval.size(); i++){
+            if (interval[i].includes(left_edge+numeric_limits<double>::min())){
+                while(!interval[i-1].includes(right_edge-numeric_limits<double>::min())){
+                    sub_interval.push_back(interval[i]);
                     i+=1;
                     
                 };
@@ -216,6 +190,20 @@ public:
         
         return sub_interval;
     }
+    vector<Interval> calcFrequency(NumberVector result, long long m, IntervalEdges edges){
+        vector<double> decades = edges.divideIntervals();
+        vector<Interval> intervals_decades = edges.makeIntervals(decades);
+        for(auto& num: result){
+            for(auto&  Interval : intervals_decades){
+                Interval.intervalPushNumber(num);
+            }
+        }
+        for(auto& Interval : intervals_decades){
+            Interval.setFrequency(m);
+        }
+        return intervals_decades;
+    }
+    
     void printResult(vector<vector<Interval>> intervalsVector){
         
         for(auto& intervals: intervalsVector){
@@ -238,23 +226,23 @@ public:
 
 class LinearCongruentialMethod: public GeneratorBase {
 private:
-    const long m_;
+    const long long m_;
     
     
 public:
-    LinearCongruentialMethod(long m)
+    LinearCongruentialMethod(long long m)
     : m_(m){}
     
     void linearCongruentialMethod() {
-        long X0=1, X1;
+        long long X0=1, X1;
         NumberVector linearCongruentialMethod_vector;
-        linearCongruentialMethod_vector.pushEvenlyValue(X0, m_);
+        linearCongruentialMethod_vector.pushHundredEvenlyValue(X0, m_);
         for (size_t i = 1; i < m_; ++i) {
             X1 = LCM(m_, X0, 2, 3);
             X0 = X1;
-            linearCongruentialMethod_vector.pushEvenlyValue(X1, m_);
+            linearCongruentialMethod_vector.pushHundredEvenlyValue(X1, m_);
         }
-        vector<Interval> vals = populateAndCalculateFrequencies(linearCongruentialMethod_vector, m_, IntervalEdges(0, 1, 10, true, true));
+        vector<Interval> vals = calcFrequency(linearCongruentialMethod_vector, m_, IntervalEdges(0, 100, 10, true, true));
         printResult(vector<vector<Interval>>{vals});
     }
 };
@@ -262,21 +250,21 @@ public:
 
 class QuadraticCongruentialMethod: public GeneratorBase {
 private:
-    const long m_;
+    const long long m_;
     
 public:
-    QuadraticCongruentialMethod(long m)
+    QuadraticCongruentialMethod(long long m)
     : m_(m){}
     void quadraticCongruentialMethod(){
-        long X0 = 13, X1;
+        long long X0 = 13, X1;
         NumberVector quadraticCongruentialMethod_vector;
-        quadraticCongruentialMethod_vector.pushEvenlyValue(X0, m_);
+        quadraticCongruentialMethod_vector.pushHundredEvenlyValue(X0, m_);
         for (size_t i = 1; i < m_; ++i) {
             X1 = QCM(m_, X0, 1, 6, 3);
             X0 = X1;
-            quadraticCongruentialMethod_vector.pushEvenlyValue(X1, m_);
+            quadraticCongruentialMethod_vector.pushHundredEvenlyValue(X1, m_);
         }
-        vector<Interval> vals = populateAndCalculateFrequencies(quadraticCongruentialMethod_vector, m_, IntervalEdges(0, 1, 10, true, true));
+        vector<Interval> vals = calcFrequency(quadraticCongruentialMethod_vector, m_, IntervalEdges(0, 1, 10, true, true));
         printResult(vector<vector<Interval>>{vals});
     }
 };
@@ -284,24 +272,24 @@ public:
 
 class FibonachiNumbersMethod: public GeneratorBase {
 private:
-    const long m_;
+    const long long m_;
     
     
 public:
-    FibonachiNumbersMethod(long m)
+    FibonachiNumbersMethod(long long m)
     : m_(m){}
     void fibonachiNumbersMethod(){
-        long X0= 0 % m_, X1 = 1 % m_, X2 = 0;
+        long long X0= 0 % m_, X1 = 1 % m_, X2 = 0;
         NumberVector fibonachiNumbersMethod_vector;
-        fibonachiNumbersMethod_vector.pushEvenlyValue(X0, m_);
-        fibonachiNumbersMethod_vector.pushEvenlyValue(X1, m_);
+        fibonachiNumbersMethod_vector.pushHundredEvenlyValue(X0, m_);
+        fibonachiNumbersMethod_vector.pushHundredEvenlyValue(X1, m_);
         for (size_t i = 2; i < m_; ++i) {
             X2 = FNM(m_, X0, X1);
             X0 = X1;
             X1 = X2;
-            fibonachiNumbersMethod_vector.pushEvenlyValue(X2, m_);
+            fibonachiNumbersMethod_vector.pushHundredEvenlyValue(X2, m_);
         }
-        vector<Interval> vals = populateAndCalculateFrequencies(fibonachiNumbersMethod_vector, m_, IntervalEdges(0, 1, 10, true, true));
+        vector<Interval> vals = calcFrequency(fibonachiNumbersMethod_vector, m_, IntervalEdges(0, 100, 10, true, true));
         printResult(vector<vector<Interval>>{vals});
     }
 };
@@ -309,23 +297,23 @@ public:
 
 class InverseCongruentialMethod: public GeneratorBase {
 private:
-    const long m_;
+    const long long m_;
     
     
 public:
-    InverseCongruentialMethod(long m)
+    InverseCongruentialMethod(long long m)
     : m_(m){}
     void inverseCongruentialMethod(){
-        long X0= 1, X1= 0;
+        long long X0= 1, X1= 0;
         NumberVector inverseCongruentialMethod_vector;
-        inverseCongruentialMethod_vector.pushEvenlyValue(X1, m_);
+        inverseCongruentialMethod_vector.pushHundredEvenlyValue(X1, m_);
         for (size_t i = 1; i < m_; ++i) {
             X1 = ICG(100003 , 2, 3, X0) ;
             X0 = X1;
-            inverseCongruentialMethod_vector.pushEvenlyValue(X1, m_);
+            inverseCongruentialMethod_vector.pushHundredEvenlyValue(X1, m_);
             
         }
-        vector<Interval> vals = populateAndCalculateFrequencies(inverseCongruentialMethod_vector, m_, IntervalEdges(0, 1, 10, true, true));
+        vector<Interval> vals = calcFrequency(inverseCongruentialMethod_vector, m_, IntervalEdges(0, 100, 10, true, true));
         printResult(vector<vector<Interval>>{vals});
     }
 };
@@ -333,17 +321,17 @@ public:
 
 class UnionMethod: public GeneratorBase{
 private:
-    const long m_;
+    const long long m_;
 public:
-    UnionMethod(long m)
+    UnionMethod(long long m)
     : m_(m) {
         
     }
     
     void unionMethod() {
-        long X0 = 6, Y0 = 1, X1, Y1, Z ;
+        long long X0 = 6, Y0 = 1, X1, Y1, Z ;
         NumberVector unionMethod_vector;
-        unionMethod_vector.pushEvenlyValue(X0-Y0, m_);
+        unionMethod_vector.pushHundredEvenlyValue(X0-Y0, m_);
         for (size_t i = 1; i < m_; ++i) {
             X1 = LCM(m_, X0, 4, 6);
             X0 = X1;
@@ -355,9 +343,9 @@ public:
             
             Z%=m_;
             
-            unionMethod_vector.pushEvenlyValue(Z, m_);
+            unionMethod_vector.pushHundredEvenlyValue(Z, m_);
         }
-        vector<Interval> vals = populateAndCalculateFrequencies(unionMethod_vector, m_, IntervalEdges(0, 1, 10, true, true));
+        vector<Interval> vals = calcFrequency(unionMethod_vector, m_, IntervalEdges(0, 100, 10, true, true));
         printResult(vector<vector<Interval>>{vals});
     }
 };
@@ -367,23 +355,23 @@ public:
 
 class SigmaMethod: public GeneratorBase{
 private:
-    long m_;
+    long long m_;
     
 public:
-    SigmaMethod(long m)
+    SigmaMethod(long long m)
     : m_(m){}
     
     void sigmaMethod() {
-        float X0;
-        long Y0 = 1, Y1;
+        double X0;
+        long long Y0 = 1, Y1;
         NumberVector sigmaMethod_vector;
-        array<float, 12> selected_numbers;
-        float sum=0;
+        array<double, 12> selected_numbers;
+        double sum=0;
         for (size_t i = 0; i < m_; ++i) {
             for(size_t i = 0; i < 12; ++i){
                 Y1 = LCM(m_, Y0, 6, 7);
                 Y0 = Y1;
-                selected_numbers[i] = static_cast<float>(Y1)/static_cast<float>(m_-1);
+                selected_numbers[i] = static_cast<double>(Y1)/static_cast<double>(m_-1);
                 sum += selected_numbers[i];
             }
             
@@ -393,21 +381,21 @@ public:
             
         }
         
-        vector<Interval> vals = populateAndCalculateFrequencies(sigmaMethod_vector, m_, IntervalEdges(-3, 3, 12, true, false));
+        vector<Interval> vals = calcFrequency(sigmaMethod_vector, m_, IntervalEdges(-3, 3, 12, true, true));
         vector<Interval> sub_interval = makeSubInterval(vals, 0, 1);
         printResult(vector<vector<Interval>>{vals, sub_interval});
     }
 };
 class PolarMethod: public GeneratorBase{
 private:
-    long m_;
+    long long m_;
     
 public:
-    PolarMethod(long m)
+    PolarMethod(long long m)
     : m_(m){}
     void polarMehod(){
-        long Y0 = 1, Y1 = 2, Y2, Y3, numSkipped= 0 ;
-        float S,U1 ,U2, V1, V2, X1, X2;
+        long long Y0 = 1, Y1 = 2, Y2, Y3, numSkipped= 0 ;
+        double S,U1 ,U2, V1, V2, X1, X2;
         NumberVector polarMethod_vector;
         for(size_t i = 0; i < m_/2 + numSkipped; ++i){
             
@@ -415,8 +403,8 @@ public:
             Y3 = LCM(m_, Y1, 2, 3);
             Y0 = Y2;
             Y1 = Y3;
-            U1 = static_cast<float>(Y2)/static_cast<float>(m_);
-            U2 = static_cast<float>(Y3)/static_cast<float>(m_);
+            U1 = static_cast<double>(Y2)/static_cast<double>(m_);
+            U2 = static_cast<double>(Y3)/static_cast<double>(m_);
             V1 = 2*U1-1;
             V2 = 2*U2-1;
             S = V1*V1 + V2*V2;
@@ -424,14 +412,15 @@ public:
                 numSkipped+=1;
                 continue;
             };
-            float ln = -2*log(S);
-            float expression = (ln)/S;
+            double ln = -2*log(S);
+            double expression = (ln)/S;
             X1 = V1*sqrt(expression);
             X2 = V2*sqrt(expression);
-            polarMethod_vector.insert(polarMethod_vector.returnVectorSize(), {X1, X2});
+            polarMethod_vector.pushValue(X1);
+            polarMethod_vector.pushValue(X2);
             
         }
-        vector<Interval> vals = populateAndCalculateFrequencies(polarMethod_vector, m_, IntervalEdges(-3, 3, 12, true, true));
+        vector<Interval> vals = calcFrequency(polarMethod_vector, m_, IntervalEdges(-3, 3, 12, true, true));
         vector <Interval> sub_interval = makeSubInterval(vals, 0, 1);
         printResult(vector<vector<Interval>>{vals, sub_interval});
         
@@ -439,14 +428,14 @@ public:
 };
 class RelationMethod: public GeneratorBase{
 private:
-    long m_;
+    long long m_;
     
 public:
-    RelationMethod(long m)
+    RelationMethod(long long m)
     : m_(m){}
     void relationMethod(){
-        long Y0 = 1, Y1 = 2, Y2, Y3, numSkipped= 0;
-        float U1, V1, X;
+        long long Y0 = 1, Y1 = 2, Y2, Y3, numSkipped= 0;
+        double U1, V1, X;
         NumberVector relationMethod_vector;
         for(size_t i = 0; i < m_+numSkipped; ++i){
             
@@ -454,24 +443,24 @@ public:
             Y3 = LCM(m_, Y1, 2, 3);
             Y0 = Y2;
             Y1 = Y3;
-            U1 = static_cast<float>(Y2)/static_cast<float>(m_);
-            V1 = static_cast<float>(Y3)/static_cast<float>(m_);
+            U1 = static_cast<double>(Y2)/static_cast<double>(m_);
+            V1 = static_cast<double>(Y3)/static_cast<double>(m_);
             if(U1 == 0) {
                 numSkipped+=1;
                 continue;
                 
             }
-            V1 = static_cast<float>(Y3)/static_cast<float>(m_);
+            V1 = static_cast<double>(Y3)/static_cast<double>(m_);
             X = sqrt(8.0/exp(1))*((V1-0.5)/U1);
             
-            if(X*X <= 5-4*exp(0.25)*U1){
+            if(X*X <= (5-4*exp(0.25)*U1)){
                 relationMethod_vector.pushValue(X);
                 continue;
             }
             else if (X*X >= ((4*exp(-1.35)/U1)+1.4)){
                 numSkipped+=1;
                 continue;
-            }else if(X*X <= -4*log(U1)){
+            }else if(X*X <= (-4*log(U1))){
                 relationMethod_vector.pushValue(X);
                 
             }else{
@@ -479,7 +468,7 @@ public:
             }
             
         }
-        vector<Interval> vals = populateAndCalculateFrequencies(relationMethod_vector, m_, IntervalEdges(-3, 3, 12, true, true));
+        vector<Interval> vals = calcFrequency(relationMethod_vector, m_, IntervalEdges(-3, 3, 12, true, true));
         vector <Interval> sub_interval = makeSubInterval(vals, 0, 1);
         printResult(vector<vector<Interval>>{vals, sub_interval});
     }
@@ -489,64 +478,65 @@ public:
 
 class LogarithmMethod: public GeneratorBase {
 private:
-    const long m_;
+    const long long m_;
     
     
 public:
-    LogarithmMethod(long m)
+    LogarithmMethod(long long m)
     : m_(m){}
     
     void logarithmMethod() {
-        long Y0=1, Y1;
-        float U0, X;
+        long long Y0=1, Y1;
+        double U0, X;
         NumberVector logarithmMethod_vector;
         
         for (size_t i = 1; i < m_; ++i) {
             Y1 = LCM(m_, Y0, 2, 3);
             Y0 = Y1;
-            U0 = static_cast<float>(Y1)/static_cast<float>(m_);
+            U0 = static_cast<double>(Y1)/static_cast<double>(m_);
             X = -14*log(U0);
             logarithmMethod_vector.pushValue(X);
         }
-        vector<Interval> vals = populateAndCalculateFrequencies(logarithmMethod_vector, m_, IntervalEdges(0, 100, 10, true, true));
+        vector<Interval> vals = calcFrequency(logarithmMethod_vector, m_, IntervalEdges(0, 100, 10, true, true));
         printResult(vector<vector<Interval>>{vals});
     }
 };
 class ArensMethod: public GeneratorBase {
 private:
-    const long m_;
+    const long long m_;
     
     
 public:
-    ArensMethod(long m)
+    ArensMethod(long long m)
     : m_(m){}
     
     void arensMethod() {
-        long Z0=1, Z1, numSkipped= 0, H0=3, H1;
-        const int a= 50;
-        float U0, X,Y, V0 ;
+        long long Z0=1, Z1, numSkipped= 0, H0=3, H1;
+        const int a= 40;
+        double U0, X,Y, V0 ;
         NumberVector arensMethod_vector;
         
         for (size_t i = 1; i < m_+numSkipped; ++i) {
             Z1 = LCM(m_, Z0, 2, 3);
             Z0 = Z1;
-            U0 = static_cast<float>(Z1)/static_cast<float>(m_);
+            U0 = static_cast<double>(Z1)/static_cast<double>(m_);
             Y = tan(M_PI*U0);
-            X=sqrt(2*a-1)*Y+a-1;
+            double extractedExpr = sqrt(2*a-1)*Y;
+            X=extractedExpr+a-1;
             if(X<=0){
                 numSkipped+=1;
                 continue;
             }
             H1 = LCM(m_, H0, 2, 3);
             H0 = H1;
-            V0 = static_cast<float>(H1)/static_cast<float>(m_);
-            if (V0 > ((1+Y*Y)*exp(((a-1)*log(X/(a-1)-sqrt(2*a-1)*Y))))){
+            V0 = static_cast<double>(H1)/static_cast<double>(m_);
+            if (V0 > ((1+Y*Y)*exp((a-1)*log(X/(a-1))-extractedExpr*Y))){
                 numSkipped+=1;
                 continue;
             }
             arensMethod_vector.pushValue(X);
         }
-        vector<Interval> vals = populateAndCalculateFrequencies(arensMethod_vector, m_, IntervalEdges(0, 100, 10, true, true));
+        vector<Interval> vals = calcFrequency(arensMethod_vector, m_, IntervalEdges(0, 100, 10, true, true));
         printResult(vector<vector<Interval>>{vals});
     }
 };
@@ -554,4 +544,4 @@ public:
 
 
 
-#endif /* RandomGenerators_h */
+#endif 

@@ -17,7 +17,7 @@ void print_menu();
 int main() {
     print_menu();
     int type;
-    long long m = 100000;
+    long long m = 1000000;
     cin >> type;
     
     switch (type) {
