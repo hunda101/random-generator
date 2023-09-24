@@ -267,7 +267,7 @@ public:
             X0 = X1;
             quadraticCongruentialMethod_vector.pushHundredEvenlyValue(X1, m_);
         }
-        vector<Interval> vals = calcFrequency(quadraticCongruentialMethod_vector, m_, IntervalEdges(0, 1, 10, true, true));
+        vector<Interval> vals = calcFrequency(quadraticCongruentialMethod_vector, m_, IntervalEdges(0, 100, 10, true, true));
         printResult(vector<vector<Interval>>{vals});
     }
 };
@@ -311,7 +311,7 @@ public:
         NumberVector inverseCongruentialMethod_vector;
         inverseCongruentialMethod_vector.pushHundredEvenlyValue(X1, m_);
         for (size_t i = 1; i < m_; ++i) {
-            X1 = ICG(100003 , 2, 3, X0) ;
+            X1 = ICG(1000003 , 2, 3, X0) ;
             X0 = X1;
             inverseCongruentialMethod_vector.pushHundredEvenlyValue(X1, m_);
             
@@ -529,7 +529,7 @@ public:
                 numSkipped+=1;
                 continue;
             }
-            H1 = LCM(m_, H0, 2, 3);
+            H1 = LCM(m_, H0, 6, 7);
             H0 = H1;
             V0 = static_cast<double>(H1)/static_cast<double>(m_);
             if (V0 > ((1+Y*Y)*exp((a-1)*log(X/(a-1))-extractedExpr*Y))){
