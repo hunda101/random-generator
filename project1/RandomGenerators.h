@@ -132,7 +132,7 @@ public:
     vector<double>::iterator end() {
         return vals_.end();
     }
-    void insert(size_t position, const vector<double>& values) {
+    void insert(size_t position, vector<double> values) {
             if (position <=  this->vals_.size()) {
                 this->vals_.insert(this->vals_.begin() + position, values.begin(), values.end());
             }
@@ -546,4 +546,4 @@ public:
 
 
 
-#endif 
+#endif
