@@ -99,7 +99,7 @@ public:
     }
     vector<Interval> makeIntervals(vector<double>extremes){
         vector<Interval> intervals;
-        for(size_t i = 0; i<extremes.size()-1; i++){
+        for(int i = 0; i<extremes.size()-1; i++){
             intervals.push_back(Interval(extremes[i], extremes[i+1], i == 0 ? returnSquareLeft(): false, i == extremes.size()-2 ? returnSquareRight(): true));
         }
         return intervals;
@@ -132,7 +132,7 @@ public:
     vector<double>::iterator end() {
         return vals_.end();
     }
-    void insert(size_t position, vector<double> values) {
+    void insert(long long position, vector<double> values) {
             if (position <=  this->vals_.size()) {
                 this->vals_.insert(this->vals_.begin() + position, values.begin(), values.end());
             }
@@ -142,7 +142,122 @@ public:
 class GeneratorBase {
     
 public:
-    long long LCM(long long m, long long X0, int a, int c){
+    array<long long, 4> enterParametr(string Method){
+        array<long long, 4> parametrs = {};
+        if (Method == "LCM"){
+            long long m = 0, c = 0, a = 0, X0 = 0;
+            while (m == 0){
+                cout << "enter positive m: ";
+                cin >> m;
+                if (m < 0) m = 0;
+               
+                
+            }
+            parametrs[0] = m;
+            while (c == 0){
+                cout << "enter positive c: ";
+                
+                cin >> c;
+                if (c < 0 && c >= m){
+                    c = 0;
+                    continue;
+                }
+                
+                if(gcd(m, c) != 1){
+                    cout << "m and c is not relatively prime" << endl;
+                    c = 0;
+                }
+            }
+            parametrs[1] = c;
+            while (a == 0){
+                
+                cout << "enter positive a: ";
+                cin >> a;
+                long long b = a - 1;
+                if (a < 0 && a >= m) {
+                    a = 0;
+                    continue;
+                };
+                tuple<long long *, long long> primes = generatePrimes(m, m);
+                long long *arr = get<0>(primes);
+                long long n = get<1>(primes);
+                for (int i= 0 ; i <= n ; ++i) {
+//                    cout << b << " " << arr[i] << endl;
+                    if (b % arr[i] != 0){
+//                        cout << b << " " << arr[i] << endl;
+                        cout << "a-1 is not multiple to p " << endl;
+                        a = 0;
+                        break;
+                    }
+                }
+                if (a == 0) continue;
+                if(m % 4 == 0 && b % 4 != 0){
+                    cout << "a-1 is not multiple to 4 " << endl;
+                    a = 0;
+                }
+            }
+            parametrs[2] = a;
+            while (X0 == 0){
+                cout << "enter positive X0: ";
+                cin >> X0;
+                if (X0 < 0 && X0 >= m){
+                    X0 = 0;
+                    continue;
+                };
+                parametrs[3] = X0;
+            }
+        }
+            
+        return parametrs;
+    }
+    tuple<long long *, long long> generatePrimes(long long m, long long size) {
+        long long *Primes = new long long[size];
+        int index = 0;
+        long long PrimeIndex = 0;
+        if(m% 2 == 0){
+            Primes[0] = 2;
+        }
+        
+        
+        for (long long j = 3; j <= size; j = j + 2) {
+            int i = 0;
+            for (; i <= index; i++) {
+                if (j % Primes[i] == 0 && j != Primes[i]) {
+                    break;
+                }
+            }
+            
+           
+            if (i == index + 1 && m%j == 0) {
+                Primes[index+1] = j;
+                index++;
+                PrimeIndex++;
+            }
+        }
+        if (Primes[0] == 0) {
+                long long *newPrimes = new long long[size - 1];
+                for (int i = 1; i < PrimeIndex+1; ++i) {
+                    newPrimes[i-1] = Primes[i];
+                }
+                PrimeIndex-=1;
+                
+                Primes = newPrimes;
+            }
+        return make_tuple(Primes, PrimeIndex);
+        
+    }
+    long long gcd(long long a, long long b){
+        long long t;
+        while (b != 0){
+            t = b;
+            b = a%b;
+            a = t;
+        }
+        return a;
+    }
+    long long LCM(long long m, long long X0, long long a, long long c){
+        
+        
         return (a*X0 +c) % m;
     }
     long long QCM(long long m, long long X0,  int d, int a, int c){
@@ -180,7 +295,7 @@ public:
     }
     vector<Interval> makeSubInterval(vector<Interval> interval, double left_edge, double right_edge){
         vector<Interval> sub_interval;
-        for(size_t i = 0; i < interval.size(); i++){
+        for(int i = 0; i < interval.size(); i++){
             if (interval[i].includes(left_edge+numeric_limits<double>::min())){
                 while(!interval[i-1].includes(right_edge-numeric_limits<double>::min())){
                     sub_interval.push_back(interval[i]);
@@ -229,23 +344,28 @@ public:
 
 class LinearCongruentialMethod: public GeneratorBase {
 private:
-    const long long m_;
+    
     
     
 public:
-    LinearCongruentialMethod(long long m)
-    : m_(m){}
+    LinearCongruentialMethod(){};
     
     void linearCongruentialMethod() {
-        long long X0=1, X1;
-        NumberVector linearCongruentialMethod_vector;
-        linearCongruentialMethod_vector.pushHundredEvenlyValue(X0, m_);
-        for (size_t i = 1; i < m_; ++i) {
-            X1 = LCM(m_, X0, 2, 3);
-            X0 = X1;
-            linearCongruentialMethod_vector.pushHundredEvenlyValue(X1, m_);
+        long long X0, X1, a, c, m;
+        long long* parametr[4] {&m, &c, &a, &X0};
+        array<long long, 4> enteredParametrs = enterParametr("LCM");
+        for(int i = 0; i < 4; i++){
+            *parametr[i] = enteredParametrs[i];
         }
-        vector<Interval> vals = calcFrequency(linearCongruentialMethod_vector, m_, IntervalEdges(0, 100, 10, true, true));
+        NumberVector linearCongruentialMethod_vector;
+        linearCongruentialMethod_vector.pushHundredEvenlyValue(X0, m);
+        
+        for (int i = 1; i < m; ++i) {
+            X1 = LCM(m, X0, a, c);
+            X0 = X1;
+            linearCongruentialMethod_vector.pushHundredEvenlyValue(X1, m);
+        }
+        vector<Interval> vals = calcFrequency(linearCongruentialMethod_vector, m, IntervalEdges(0, 100, 10, true, true));
         printResult(vector<vector<Interval>>{vals});
     }
 };
@@ -262,7 +382,7 @@ public:
         long long X0 = 13, X1;
         NumberVector quadraticCongruentialMethod_vector;
         quadraticCongruentialMethod_vector.pushHundredEvenlyValue(X0, m_);
-        for (size_t i = 1; i < m_; ++i) {
+        for (int i = 1; i < m_; ++i) {
             X1 = QCM(m_, X0, 1, 6, 3);
             X0 = X1;
             quadraticCongruentialMethod_vector.pushHundredEvenlyValue(X1, m_);
@@ -286,7 +406,7 @@ public:
         NumberVector fibonachiNumbersMethod_vector;
         fibonachiNumbersMethod_vector.pushHundredEvenlyValue(X0, m_);
         fibonachiNumbersMethod_vector.pushHundredEvenlyValue(X1, m_);
-        for (size_t i = 2; i < m_; ++i) {
+        for (int i = 2; i < m_; ++i) {
             X2 = FNM(m_, X0, X1);
             X0 = X1;
             X1 = X2;
@@ -310,7 +430,7 @@ public:
         long long X0= 1, X1= 0;
         NumberVector inverseCongruentialMethod_vector;
         inverseCongruentialMethod_vector.pushHundredEvenlyValue(X1, m_);
-        for (size_t i = 1; i < m_; ++i) {
+        for (int i = 1; i < m_; ++i) {
             X1 = ICG(1000003 , 2, 3, X0) ;
             X0 = X1;
             inverseCongruentialMethod_vector.pushHundredEvenlyValue(X1, m_);
@@ -335,7 +455,7 @@ public:
         long long X0 = 6, Y0 = 1, X1, Y1, Z ;
         NumberVector unionMethod_vector;
         unionMethod_vector.pushHundredEvenlyValue(X0-Y0, m_);
-        for (size_t i = 1; i < m_; ++i) {
+        for (int i = 1; i < m_; ++i) {
             X1 = LCM(m_, X0, 4, 6);
             X0 = X1;
             Y1 = LCM(m_/1000, Y0, 6, 7);
@@ -370,8 +490,8 @@ public:
         NumberVector sigmaMethod_vector;
         array<double, 12> selected_numbers;
         double sum=0;
-        for (size_t i = 0; i < m_; ++i) {
-            for(size_t i = 0; i < 12; ++i){
+        for (int i = 0; i < m_; ++i) {
+            for(int i = 0; i < 12; ++i){
                 Y1 = LCM(m_, Y0, 6, 7);
                 Y0 = Y1;
                 selected_numbers[i] = static_cast<double>(Y1)/static_cast<double>(m_-1);
@@ -400,7 +520,7 @@ public:
         long long Y0 = 1, Y1 = 2, Y2, Y3, numSkipped= 0 ;
         double S,U1 ,U2, V1, V2, X1, X2;
         NumberVector polarMethod_vector;
-        for(size_t i = 0; i < m_/2 + numSkipped; ++i){
+        for(int i = 0; i < m_/2 + numSkipped; ++i){
             
             Y2 = LCM(m_, Y0, 6, 7);
             Y3 = LCM(m_, Y1, 2, 3);
@@ -439,7 +559,7 @@ public:
         long long Y0 = 1, Y1 = 2, Y2, Y3, numSkipped= 0;
         double U1, V1, X;
         NumberVector relationMethod_vector;
-        for(size_t i = 0; i < m_+numSkipped; ++i){
+        for(int i = 0; i < m_+numSkipped; ++i){
             
             Y2 = LCM(m_, Y0, 6, 7);
             Y3 = LCM(m_, Y1, 2, 3);
@@ -459,7 +579,7 @@ public:
                 relationMethod_vector.pushValue(X);
                 continue;
             }
-            else if (X*X >= ((4*exp(-1.35)/U1)+1.4)){
+            else if (X*X >= (((4*exp(-1.35))/U1)+1.4)){
                 numSkipped+=1;
                 continue;
             }else if(X*X <= (-4*log(U1))){
@@ -492,7 +612,7 @@ public:
         double U0, X;
         NumberVector logarithmMethod_vector;
         
-        for (size_t i = 1; i < m_; ++i) {
+        for (int i = 1; i < m_; ++i) {
             Y1 = LCM(m_, Y0, 2, 3);
             Y0 = Y1;
             U0 = static_cast<double>(Y1)/static_cast<double>(m_);
@@ -518,7 +638,7 @@ public:
         double U0, X,Y, V0 ;
         NumberVector arensMethod_vector;
         
-        for (size_t i = 1; i < m_+numSkipped; ++i) {
+        for (int i = 1; i < m_+numSkipped; ++i) {
             Z1 = LCM(m_, Z0, 2, 3);
             Z0 = Z1;
             U0 = static_cast<double>(Z1)/static_cast<double>(m_);
@@ -546,4 +666,4 @@ public:
 
 
 
-#endif
+#endif 

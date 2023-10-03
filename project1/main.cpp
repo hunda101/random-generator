@@ -22,7 +22,7 @@ int main() {
     
     switch (type) {
         case 1:{
-            LinearCongruentialMethod generator(m);
+            LinearCongruentialMethod generator;
             generator.linearCongruentialMethod();
             break;
         }
@@ -84,7 +84,7 @@ int main() {
         }
     }
     
-    return 0;
+    return 1;
     
 }
 
