@@ -74,7 +74,7 @@ int main() {
             
         }
         case 10:{
-            ArensMethod generator(m);
+            ArensMethod generator;
             generator.arensMethod();
             break;
             

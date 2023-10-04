@@ -205,7 +205,7 @@ public:
             }
         }
         if (Method == "QCM"){
-            long m= 0 , a= 0, c=0, d=0, b=0;
+            long m= 0 , a= 0, c=0, d=0, b=0, X0=0;
             while (m == 0){
                 cout << "enter positive m: ";
                 cin >> m;
@@ -251,7 +251,7 @@ public:
             }
             parametrs[2] = a;
             while (d == 0){
-                cout << "enter positive m: ";
+                cout << "enter positive d: ";
                 cin >> d;
                 if (d < 0){
                     d = 0;
@@ -276,25 +276,35 @@ public:
                     continue;
                 }
                 if(m % 4 == 0){
-                    if(d % 2 != 0 || d != b%4){
+                    if(d % 2 != 0 || !is_compared(d, b, 4)){
                         cout << " число d є парним і d = a–1 mod 4, якщо число m є кратним 4; " << endl;
                         d = 0;
                         continue;
                     }
                 }
                 else if(m % 2 == 0){
-                    if(d != b%2){
+                    if(!is_compared(d, b, 2)){
                         cout << " число d = a–1 mod 2 , якщо число m є кратним 2; " << endl;
                         d = 0;
                         continue;
                     }
                 }
                 else if(m%3==0){
-                    if(d == (3*c)%9){
+                    if(is_compared(d, 3*c, 9)){
                         cout << "d != 3c mod 9, якщо число m є кратним 3" << endl;
                         d = 0;
                     }
                 }
+                parametrs[3] = d;
+            }
+            while (X0 == 0){
+                cout << "enter positive X0: ";
+                cin >> X0;
+                if (X0 < 0 && X0 >= m){
+                    X0 = 0;
+                    continue;
+                };
+                parametrs[4] = X0;
             }
         }
         return parametrs;
@@ -339,6 +349,14 @@ public:
         return make_tuple(Primes, PrimeIndex);
         
     }
+    long long input_m(){
+        long long m=0;
+        while(m == 0){
+            cout << "inut number of values: ";
+            if (m == 0) continue;
+        }
+        return m;
+    }
     long long gcd(long long a, long long b){
         long long t;
         while (b != 0){
@@ -348,10 +366,13 @@ public:
         }
         return a;
     }
+    bool is_compared(long long d, long b, long long a){
+        return (b % gcd(d, a)) == 0;
+    }
     long long LCM(long long m, long long X0, long long a, long long c){
         return (a*X0 +c) % m;
     }
-    long long QCM(long long m, long long X0,  int d, int a, int c){
+    long long QCM(long long m, long long X0,  long long d, long long a, long long c){
         return (d* X0 * X0 +a *X0 + c ) % m;
     }
     long long FNM(long long m, long long X1, long long X2 ){
@@ -445,7 +466,7 @@ public:
         long long X0, X1, a, c, m;
         long long* parametr[4] {&m, &c, &a, &X0};
         long long *enteredParametrs = enterParametr("LCM", 4);
-        for(int i = 0; i < 4; i++){
+        for(int i = 0; i < 3; i++){
             *parametr[i] = enteredParametrs[i];
         }
         NumberVector linearCongruentialMethod_vector;
@@ -470,11 +491,16 @@ public:
     QuadraticCongruentialMethod(long long m)
     : m_(m){}
     void quadraticCongruentialMethod(){
-        long long X0 = 13, X1;
+        long long X0 = 13, X1, m, c, a, d;
         NumberVector quadraticCongruentialMethod_vector;
         quadraticCongruentialMethod_vector.pushHundredEvenlyValue(X0, m_);
+        long long* parametr[5] {&m, &c, &d, &a, &X0};
+        long long *enteredParametrs = enterParametr("QCM", 5);
+        for(int i = 0; i < 4; i++){
+            *parametr[i] = enteredParametrs[i];
+        }
         for (int i = 1; i < m_; ++i) {
-            X1 = QCM(m_, X0, 1, 6, 3);
+            X1 = QCM(m, X0, d, a, c);
             X0 = X1;
             quadraticCongruentialMethod_vector.pushHundredEvenlyValue(X1, m_);
         }
@@ -493,10 +519,10 @@ public:
     FibonachiNumbersMethod(long long m)
     : m_(m){}
     void fibonachiNumbersMethod(){
-        long long X0= 0 % m_, X1 = 1 % m_, X2 = 0;
+        long long X0= 0 % m_, X1 = 1 % m_, X2 = 0, m= 0;
         NumberVector fibonachiNumbersMethod_vector;
-        fibonachiNumbersMethod_vector.pushHundredEvenlyValue(X0, m_);
-        fibonachiNumbersMethod_vector.pushHundredEvenlyValue(X1, m_);
+        fibonachiNumbersMethod_vector.pushHundredEvenlyValue(X0, m);
+        fibonachiNumbersMethod_vector.pushHundredEvenlyValue(X1, m);
         for (int i = 2; i < m_; ++i) {
             X2 = FNM(m_, X0, X1);
             X0 = X1;
@@ -588,8 +614,7 @@ public:
         double sum=0;
         long long a1, c1, m1;
         
-        cout << "enter m: ";
-        cin >> m;
+        m = input_m();
         long long* parametr1[4] {&m1, &c1, &a1, &Y0};
         long long *enteredParametrs1 = enterParametr("LCM", 4);
         for(int i = 0; i < 4; i++){
@@ -625,8 +650,7 @@ public:
         long long a1, c1, m1;
         long long a2, c2, m2;
         
-        cout << "enter m: ";
-        cin >> m;
+        m = input_m();
         long long* parametr1[4] {&m1, &c1, &a1, &Y0};
         long long *enteredParametrs1 = enterParametr("LCM", 4);
         long long* parametr2[4] {&m2, &c2, &a2, &Y1};
@@ -673,13 +697,8 @@ public:
         long long a1, c1, m1;
         long long a2, c2, m2;
         double U1, V1, X;
-        
-        
-        
         NumberVector relationMethod_vector;
-        
-        cout << "enter m: ";
-        cin >> m;
+        m = input_m();
         long long* parametr1[4] {&m1, &c1, &a1, &Y0};
         long long *enteredParametrs1 = enterParametr("LCM", 4);
         long long* parametr2[4] {&m2, &c2, &a2, &Y1};
@@ -741,8 +760,7 @@ public:
         NumberVector logarithmMethod_vector;
         
         long long a1, c1, m1;
-        cout << "enter m: ";
-        cin >> m;
+        m = input_m();
         long long* parametr1[4] {&m1, &c1, &a1, &Y0};
         long long *enteredParametrs1 = enterParametr("LCM", 4);
         for(int i = 0; i < 4; i++){
@@ -760,24 +778,30 @@ public:
     }
 };
 class ArensMethod: public GeneratorBase {
-private:
-    const long long m_;
-    
-    
 public:
-    ArensMethod(long long m)
-    : m_(m){}
+    ArensMethod(){}
     
     void arensMethod() {
-        long long Z0=1, Z1, numSkipped= 0, H0=3, H1;
+        long long Z0=1, Z1, numSkipped= 0, H0=3, H1, m;
         const int a= 40;
         double U0, X,Y, V0 ;
         NumberVector arensMethod_vector;
+        long long a1, c1, m1;
+        long long a2, c2, m2;
         
-        for (int i = 1; i < m_+numSkipped; ++i) {
-            Z1 = LCM(m_, Z0, 2, 3);
+        m = input_m();
+        long long* parametr1[4] {&m1, &c1, &a1, &Z0};
+        long long *enteredParametrs1 = enterParametr("LCM", 4);
+        long long* parametr2[4] {&m2, &c2, &a2, &H0};
+        long long *enteredParametrs2 = enterParametr("LCM", 4);
+        for(int i = 0; i < 4; i++){
+            *parametr1[i] = enteredParametrs1[i];
+            *parametr2[i] = enteredParametrs2[i];
+        }
+        for (int i = 1; i < m+numSkipped; ++i) {
+            Z1 = LCM(m1, Z0, a1, c1);
             Z0 = Z1;
-            U0 = static_cast<double>(Z1)/static_cast<double>(m_);
+            U0 = static_cast<double>(Z1)/static_cast<double>(m);
             Y = tan(M_PI*U0);
             double extractedExpr = sqrt(2*a-1)*Y;
             X=extractedExpr+a-1;
@@ -785,16 +809,16 @@ public:
                 numSkipped+=1;
                 continue;
             }
-            H1 = LCM(m_, H0, 6, 7);
+            H1 = LCM(m2, H0, a2, c2);
             H0 = H1;
-            V0 = static_cast<double>(H1)/static_cast<double>(m_);
+            V0 = static_cast<double>(H1)/static_cast<double>(m);
             if (V0 > ((1+Y*Y)*exp((a-1)*log(X/(a-1))-extractedExpr*Y))){
                 numSkipped+=1;
                 continue;
             }
             arensMethod_vector.pushValue(X);
         }
-        vector<Interval> vals = calcFrequency(arensMethod_vector, m_, IntervalEdges(0, 100, 10, true, true));
+        vector<Interval> vals = calcFrequency(arensMethod_vector, m, IntervalEdges(0, 100, 10, true, true));
         printResult(vector<vector<Interval>>{vals});
     }
 };
