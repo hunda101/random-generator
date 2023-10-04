@@ -342,9 +342,11 @@ public:
                 };
                 if(!is_prime(p)){
                     if(p%2 != 0 || a % 4 == 1 || c%4 !=2 ){
+                        cout << "має період 2^(e-1), якщо a mod 4 = 1 і с mod 4 = 2. " << endl;
                         p = 0;
                         continue;
                     }
+                    X0 = 1;
                 }
             }
             parametrs[3] = p;
@@ -357,6 +359,7 @@ public:
                 };
                 parametrs[4] = X0;
             }
+            cout << X0 << endl;
         }
         return parametrs;
     }
@@ -367,17 +370,13 @@ public:
         if(m% 2 == 0){
             Primes[0] = 2;
         }
-        
-        
-        for (long long j = 3; j <= size; j = j + 2) {
+        for (long long j = 3; j < size; j = j + 2) {
             int i = 0;
             for (; i <= index; i++) {
                 if (j % Primes[i] == 0 && j != Primes[i]) {
                     break;
                 }
             }
-            
-           
             if (i == index + 1 && m%j == 0) {
                 Primes[index+1] = j;
                 index++;
@@ -398,13 +397,15 @@ public:
         }
         cout << endl;
         return make_tuple(Primes, PrimeIndex);
-        
     }
     long long input_m(){
         long long m=0;
         while(m == 0){
             cout << "inut number of values: ";
-            if (m == 0) continue;
+            cin >> m;
+            if (m < 0){
+                m = 0;
+            }
         }
         return m;
     }
@@ -453,14 +454,14 @@ public:
             x1 = t;
         }
         if (x1 < 0) x1 += b0;
-        
         return x1;
     }
     
-    long long ICG(long long m, int a, int c, long long param)
+    long long ICM(long long m, long long a, long long c, long long param)
     {
-        if (param == 0) return c;
-        return (a * mod_inv(param, m) + c) % m;
+        long long xn =(a * mod_inv(param, m) + c) % m;
+        if(xn > m-1) xn = INT_MAX;
+        return xn;
     }
     vector<Interval> makeSubInterval(vector<Interval> interval, double left_edge, double right_edge){
         vector<Interval> sub_interval;
@@ -512,10 +513,6 @@ public:
 
 
 class LinearCongruentialMethod: public GeneratorBase {
-private:
-    
-    
-    
 public:
     LinearCongruentialMethod(){};
     
@@ -541,76 +538,72 @@ public:
 
 
 class QuadraticCongruentialMethod: public GeneratorBase {
-private:
-    const long long m_;
-    
 public:
-    QuadraticCongruentialMethod(long long m)
-    : m_(m){}
+    QuadraticCongruentialMethod(){}
     void quadraticCongruentialMethod(){
-        long long X0 = 13, X1, m, c, a, d;
+        long long X0, X1, m, c, a, d;
         NumberVector quadraticCongruentialMethod_vector;
-        quadraticCongruentialMethod_vector.pushHundredEvenlyValue(X0, m_);
+        
         long long* parametr[5] {&m, &c, &d, &a, &X0};
         long long *enteredParametrs = enterParametr("QCM", 5);
+        quadraticCongruentialMethod_vector.pushHundredEvenlyValue(X0, m);
         for(int i = 0; i < 4; i++){
             *parametr[i] = enteredParametrs[i];
         }
-        for (int i = 1; i < m_; ++i) {
+        for (int i = 1; i < m; ++i) {
             X1 = QCM(m, X0, d, a, c);
             X0 = X1;
-            quadraticCongruentialMethod_vector.pushHundredEvenlyValue(X1, m_);
+            quadraticCongruentialMethod_vector.pushHundredEvenlyValue(X1, m);
         }
-        vector<Interval> vals = calcFrequency(quadraticCongruentialMethod_vector, m_, IntervalEdges(0, 100, 10, true, true));
+        vector<Interval> vals = calcFrequency(quadraticCongruentialMethod_vector, m, IntervalEdges(0, 100, 10, true, true));
         printResult(vector<vector<Interval>>{vals});
     }
 };
 
 
 class FibonachiNumbersMethod: public GeneratorBase {
-private:
-    const long long m_;
-    
-    
 public:
-    FibonachiNumbersMethod(long long m)
-    : m_(m){}
+    FibonachiNumbersMethod(){}
     void fibonachiNumbersMethod(){
-        long long X0= 0 % m_, X1 = 1 % m_, X2 = 0, m= 0;
+        
+        long long X0= 0, X1 = 1, X2 = 0, m= 0;
         NumberVector fibonachiNumbersMethod_vector;
+        m = input_m();
         fibonachiNumbersMethod_vector.pushHundredEvenlyValue(X0, m);
         fibonachiNumbersMethod_vector.pushHundredEvenlyValue(X1, m);
-        for (int i = 2; i < m_; ++i) {
-            X2 = FNM(m_, X0, X1);
+        for (int i = 2; i < m; ++i) {
+            X2 = FNM(m, X0, X1);
             X0 = X1;
             X1 = X2;
-            fibonachiNumbersMethod_vector.pushHundredEvenlyValue(X2, m_);
+            fibonachiNumbersMethod_vector.pushHundredEvenlyValue(X2, m);
         }
-        vector<Interval> vals = calcFrequency(fibonachiNumbersMethod_vector, m_, IntervalEdges(0, 100, 10, true, true));
+        vector<Interval> vals = calcFrequency(fibonachiNumbersMethod_vector, m, IntervalEdges(0, 100, 10, true, true));
         printResult(vector<vector<Interval>>{vals});
     }
 };
 
 
 class InverseCongruentialMethod: public GeneratorBase {
-private:
-    const long long m_;
-    
     
 public:
-    InverseCongruentialMethod(long long m)
-    : m_(m){}
+    InverseCongruentialMethod(){}
     void inverseCongruentialMethod(){
-        long long X0= 1, X1= 0;
+        long long X0=0, X1, m, a, c, p;
         NumberVector inverseCongruentialMethod_vector;
-        inverseCongruentialMethod_vector.pushHundredEvenlyValue(X1, m_);
-        for (int i = 1; i < m_; ++i) {
-            X1 = ICG(1000003 , 2, 3, X0) ;
-            X0 = X1;
-            inverseCongruentialMethod_vector.pushHundredEvenlyValue(X1, m_);
-            
+        long long* parametr[5] {&m, &a, &c, &p, &X0};
+        long long *enteredParametrs = enterParametr("ICM", 5);
+        for(int i = 0; i < 4; i++){
+            *parametr[i] = enteredParametrs[i];
         }
-        vector<Interval> vals = calcFrequency(inverseCongruentialMethod_vector, m_, IntervalEdges(0, 100, 10, true, true));
+        
+        inverseCongruentialMethod_vector.pushHundredEvenlyValue(X0, m);
+        for (int i = 1; i < m; ++i) {
+            X1 = ICM(p , a, c, X0) ;
+            X0 = X1;
+            inverseCongruentialMethod_vector.pushHundredEvenlyValue(X1, m);
+        }
+        
+        vector<Interval> vals = calcFrequency(inverseCongruentialMethod_vector, m, IntervalEdges(0, 100, 10, true, true));
         printResult(vector<vector<Interval>>{vals});
     }
 };
@@ -627,9 +620,7 @@ public:
         NumberVector unionMethod_vector;
         long long a1, c1, m1;
         long long a2, c2, m2;
-        
-        cout << "enter m: ";
-        cin >> m;
+        m = input_m();
         long long* parametr1[4] {&m1, &c1, &a1, &X0};
         long long *enteredParametrs1 = enterParametr("LCM", 4);
         long long* parametr2[4] {&m2, &c2, &a2, &Y0};

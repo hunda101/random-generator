@@ -17,7 +17,6 @@ void print_menu();
 int main() {
     print_menu();
     int type;
-    long long m = 1000000;
     cin >> type;
     
     switch (type) {
@@ -27,19 +26,19 @@ int main() {
             break;
         }
         case 2:{
-            QuadraticCongruentialMethod generator(m);
+            QuadraticCongruentialMethod generator;
             generator.quadraticCongruentialMethod();
             break;
         }
         case 3:
         {
-            FibonachiNumbersMethod generator(m);
+            FibonachiNumbersMethod generator;
             generator.fibonachiNumbersMethod();
             break;
         }
         case 4:
         {
-            InverseCongruentialMethod generator(m);
+            InverseCongruentialMethod generator;
             generator.inverseCongruentialMethod();
             break;
         }
