@@ -45,30 +45,30 @@ int main() {
         }
         case 5:
         {
-            UnionMethod generator(m);
+            UnionMethod generator;
             generator.unionMethod();
             break;
         }
         case 6:
         {
-            SigmaMethod generator(m);
+            SigmaMethod generator;
             generator.sigmaMethod();
             break;
         }
         case 7:
         {
-            PolarMethod generator(m);
+            PolarMethod generator;
             generator.polarMehod();
             break;
         }
         case 8:{
-            RelationMethod generator(m);
+            RelationMethod generator;
             generator.relationMethod();
             break;
             
         }
         case 9:{
-            LogarithmMethod generator(m);
+            LogarithmMethod generator;
             generator.logarithmMethod();
             break;
             
