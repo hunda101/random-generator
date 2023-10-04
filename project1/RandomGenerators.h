@@ -300,7 +300,58 @@ public:
             while (X0 == 0){
                 cout << "enter positive X0: ";
                 cin >> X0;
-                if (X0 < 0 && X0 >= m){
+                if (X0 < 0 || X0 >= m){
+                    X0 = 0;
+                    continue;
+                };
+                parametrs[4] = X0;
+            }
+            
+        }
+        if(Method == "ICM"){
+            long long m=0, a=0, c=0, p=0 ,X0=0;
+            while (m == 0){
+                cout << "input positive m: ";
+                cin >> m;
+                if(m < 0) {
+                    m = 0;
+                    continue;
+                };
+            }
+            parametrs[0] = m;
+            while (a == 0){
+                cout << "input positive a: ";
+                cin >> a;
+                if(a < 0) {
+                    a = 0;
+                    continue;
+                };
+            }
+            parametrs[1] = a;
+            while (c == 0){
+                cout << "input positive c: ";
+                cin >> c;
+            }
+            parametrs[2] = c;
+            while (p == 0){
+                cout << "input positive p: ";
+                cin >> p;
+                if(p < 0) {
+                    p = 0;
+                    continue;
+                };
+                if(!is_prime(p)){
+                    if(p%2 != 0 || a % 4 == 1 || c%4 !=2 ){
+                        p = 0;
+                        continue;
+                    }
+                }
+            }
+            parametrs[3] = p;
+            while (X0 == 0){
+                cout << "enter positive X0: ";
+                cin >> X0;
+                if (X0 < 0 || X0 >= m){
                     X0 = 0;
                     continue;
                 };
@@ -368,6 +419,12 @@ public:
     }
     bool is_compared(long long d, long b, long long a){
         return (b % gcd(d, a)) == 0;
+    }
+    bool is_prime(long long n){
+        for(long long i=2;i<=sqrt(n);i++)
+            if(n%i==0)
+                return false;
+        return true;
     }
     long long LCM(long long m, long long X0, long long a, long long c){
         return (a*X0 +c) % m;
