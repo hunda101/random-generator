@@ -802,11 +802,11 @@ public:
     LogarithmMethod(){}
     
     void logarithmMethod() {
-        long long Y0=1, Y1, m;
+        long long Y0=1, Y1, m, u_;
         double U0, X;
-        
+        cout << "enter u_ > 0: ";
+        cin >> u_;
         NumberVector logarithmMethod_vector;
-        
         long long a1, c1, m1;
         m = input_m();
         long long* parametr1[4] {&m1, &c1, &a1, &Y0};
@@ -818,7 +818,7 @@ public:
             Y1 = LCM(m1, Y0, a1, c1);
             Y0 = Y1;
             U0 = static_cast<double>(Y1)/static_cast<double>(m);
-            X = -14*log(U0);
+            X = -u_*log(U0);
             logarithmMethod_vector.pushValue(X);
         }
         vector<Interval> vals = calcFrequency(logarithmMethod_vector, m, IntervalEdges(0, 100, 10, true, true));
@@ -831,7 +831,9 @@ public:
     
     void arensMethod() {
         long long Z0=1, Z1, numSkipped= 0, H0=3, H1, m;
-        const int a= 40;
+        long long a;
+        cout << "enter a > 0: ";
+        cin >> a;
         double U0, X,Y, V0 ;
         NumberVector arensMethod_vector;
         long long a1, c1, m1;
