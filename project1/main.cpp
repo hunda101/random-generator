@@ -1,10 +1,4 @@
 #include <iostream>
-#include <math.h>
-#include <algorithm>
-#include <limits>
-#include <vector>
-#include <climits>
-#include <array>
 #include "RandomGenerators.h"
 
 using namespace std;
