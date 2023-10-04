@@ -868,7 +868,7 @@ public:
             }
             arensMethod_vector.pushValue(X);
         }
-        vector<Interval> vals = calcFrequency(arensMethod_vector, m, IntervalEdges(0, 100, 10, true, true));
+        vector<Interval> vals = calcFrequency(arensMethod_vector, m, IntervalEdges(0, 100, 1, true, true));
         printResult(vector<vector<Interval>>{vals});
     }
 };
