@@ -201,10 +201,11 @@ public:
                     X0 = 0;
                     continue;
                 };
-                parametrs[3] = X0;
+                
             }
+            parametrs[3] = X0;
         }
-        if (Method == "QCM"){
+        else if (Method == "QCM"){
             long m= 0 , a= 0, c=0, d=0, b=0, X0=0;
             while (m == 0){
                 cout << "enter positive m: ";
@@ -304,11 +305,10 @@ public:
                     X0 = 0;
                     continue;
                 };
-                parametrs[4] = X0;
             }
-            
+            parametrs[4] = X0;
         }
-        if(Method == "ICM"){
+        else if(Method == "ICM"){
             long long m=0, a=0, c=0, p=0 ,X0=0;
             while (m == 0){
                 cout << "input positive m: ";
@@ -357,9 +357,9 @@ public:
                     X0 = 0;
                     continue;
                 };
-                parametrs[4] = X0;
+                
             }
-            cout << X0 << endl;
+            parametrs[4] = X0;
         }
         return parametrs;
     }
@@ -520,7 +520,7 @@ public:
         long long X0, X1, a, c, m;
         long long* parametr[4] {&m, &c, &a, &X0};
         long long *enteredParametrs = enterParametr("LCM", 4);
-        for(int i = 0; i < 3; i++){
+        for(int i = 0; i <= 3; ++i){
             *parametr[i] = enteredParametrs[i];
         }
         NumberVector linearCongruentialMethod_vector;
@@ -545,9 +545,9 @@ public:
         NumberVector quadraticCongruentialMethod_vector;
         
         long long* parametr[5] {&m, &c, &d, &a, &X0};
-        long long *enteredParametrs = enterParametr("QCM", 5);
+        long long *enteredParametrs = enterPa   rametr("QCM", 5);
         quadraticCongruentialMethod_vector.pushHundredEvenlyValue(X0, m);
-        for(int i = 0; i < 4; i++){
+        for(int i = 0; i <= 4; ++i){
             *parametr[i] = enteredParametrs[i];
         }
         for (int i = 1; i < m; ++i) {
@@ -592,7 +592,7 @@ public:
         NumberVector inverseCongruentialMethod_vector;
         long long* parametr[5] {&m, &a, &c, &p, &X0};
         long long *enteredParametrs = enterParametr("ICM", 5);
-        for(int i = 0; i < 4; i++){
+        for(int i = 0; i <= 4; ++i){
             *parametr[i] = enteredParametrs[i];
         }
         
@@ -625,7 +625,7 @@ public:
         long long *enteredParametrs1 = enterParametr("LCM", 4);
         long long* parametr2[4] {&m2, &c2, &a2, &Y0};
         long long *enteredParametrs2 = enterParametr("LCM", 4);
-        for(int i = 0; i < 4; i++){
+        for(int i = 0; i <= 3; ++i){
             *parametr1[i] = enteredParametrs1[i];
             *parametr2[i] = enteredParametrs2[i];
         }
@@ -665,7 +665,7 @@ public:
         m = input_m();
         long long* parametr1[4] {&m1, &c1, &a1, &Y0};
         long long *enteredParametrs1 = enterParametr("LCM", 4);
-        for(int i = 0; i < 4; i++){
+        for(int i = 0; i <= 3; ++i){
             *parametr1[i] = enteredParametrs1[i];
         }
         for (int i = 0; i < m; ++i) {
@@ -703,7 +703,7 @@ public:
         long long *enteredParametrs1 = enterParametr("LCM", 4);
         long long* parametr2[4] {&m2, &c2, &a2, &Y1};
         long long *enteredParametrs2 = enterParametr("LCM", 4);
-        for(int i = 0; i < 4; i++){
+        for(int i = 0; i <= 3; ++i){
             *parametr1[i] = enteredParametrs1[i];
             *parametr2[i] = enteredParametrs2[i];
         }
@@ -751,7 +751,7 @@ public:
         long long *enteredParametrs1 = enterParametr("LCM", 4);
         long long* parametr2[4] {&m2, &c2, &a2, &Y1};
         long long *enteredParametrs2 = enterParametr("LCM", 4);
-        for(int i = 0; i < 4; i++){
+        for(int i = 0; i <= 3; ++i){
             *parametr1[i] = enteredParametrs1[i];
             *parametr2[i] = enteredParametrs2[i];
         }
@@ -811,7 +811,7 @@ public:
         m = input_m();
         long long* parametr1[4] {&m1, &c1, &a1, &Y0};
         long long *enteredParametrs1 = enterParametr("LCM", 4);
-        for(int i = 0; i < 4; i++){
+        for(int i = 0; i <= 3; ++i){
             *parametr1[i] = enteredParametrs1[i];
         }
         for (int i = 1; i < m; ++i) {
@@ -832,19 +832,19 @@ public:
     void arensMethod() {
         long long Z0=1, Z1, numSkipped= 0, H0=3, H1, m;
         long long a;
-        cout << "enter a > 0: ";
-        cin >> a;
+        
         double U0, X,Y, V0 ;
         NumberVector arensMethod_vector;
         long long a1, c1, m1;
         long long a2, c2, m2;
-        
+        cout << "enter a > 0: ";
+        cin >> a;
         m = input_m();
         long long* parametr1[4] {&m1, &c1, &a1, &Z0};
         long long *enteredParametrs1 = enterParametr("LCM", 4);
         long long* parametr2[4] {&m2, &c2, &a2, &H0};
         long long *enteredParametrs2 = enterParametr("LCM", 4);
-        for(int i = 0; i < 4; i++){
+        for(int i = 0; i <= 3; ++i){
             *parametr1[i] = enteredParametrs1[i];
             *parametr2[i] = enteredParametrs2[i];
         }
@@ -868,7 +868,7 @@ public:
             }
             arensMethod_vector.pushValue(X);
         }
-        vector<Interval> vals = calcFrequency(arensMethod_vector, m, IntervalEdges(0, 100, 1, true, true));
+        vector<Interval> vals = calcFrequency(arensMethod_vector, m, IntervalEdges(0, 100, 10, true, true));
         printResult(vector<vector<Interval>>{vals});
     }
 };
