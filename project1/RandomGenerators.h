@@ -11,7 +11,8 @@
 #include <vector>
 #include <climits>
 #include <array>
-
+#include <tuple>
+# define M_PI           3.14159265358979323846  /* pi */
 using namespace std;
 namespace randgenerator {
 struct Interval {
@@ -545,7 +546,7 @@ public:
         NumberVector quadraticCongruentialMethod_vector;
         
         long long* parametr[5] {&m, &c, &d, &a, &X0};
-        long long *enteredParametrs = enterPa   rametr("QCM", 5);
+        long long *enteredParametrs = enterParametr("QCM", 5);
         quadraticCongruentialMethod_vector.pushHundredEvenlyValue(X0, m);
         for(int i = 0; i <= 4; ++i){
             *parametr[i] = enteredParametrs[i];
