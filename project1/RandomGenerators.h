@@ -342,10 +342,12 @@ public:
                     continue;
                 };
                 if(!is_prime(p)){
-                    if(p%2 != 0 || a % 4 == 1 || c%4 !=2 ){
-                        cout << "має період 2^(e-1), якщо a mod 4 = 1 і с mod 4 = 2. " << endl;
-                        p = 0;
-                        continue;
+                    if(p%2 == 0 ){
+                        if(a%4 != 1 || c % 4 != 2){
+                            cout << "має період 2e-1, якщо a mod 4 = 1 і с mod 4 = 2." << endl;
+                            p = 0;
+                            continue;
+                        }
                     }
                     X0 = 1;
                 }
@@ -370,9 +372,11 @@ public:
         long long PrimeIndex = 0;
         if(m% 2 == 0){
             Primes[0] = 2;
+        }else{
+            Primes[0] = 0;
         }
         for (long long j = 3; j < size; j = j + 2) {
-            int i = 0;
+            int i = 1;
             for (; i <= index; i++) {
                 if (j % Primes[i] == 0 && j != Primes[i]) {
                     break;
@@ -396,7 +400,6 @@ public:
         for(int i=0;i<PrimeIndex+1; ++i ){
             cout << Primes[i] << ", ";
         }
-        cout << endl;
         return make_tuple(Primes, PrimeIndex);
     }
     long long input_m(){
