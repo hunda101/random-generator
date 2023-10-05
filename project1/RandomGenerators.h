@@ -348,8 +348,9 @@ public:
                             p = 0;
                             continue;
                         }
+                        X0 = 1;
                     }
-                    X0 = 1;
+                    
                 }
             }
             parametrs[3] = p;
@@ -447,11 +448,14 @@ public:
         if(param==0) return INT_MAX;
         else if(param == INT_MAX) return 0 ;
         if (m == 1) return 1;
+        
         while (param > 1)
         {
+            if(m == 0 ) break;
             q = param / m;
             t = m;
             m = param % m;
+            
             param = t;
             t = x0;
             x0 = x1 - q * x0;
