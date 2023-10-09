@@ -406,13 +406,35 @@ public:
     long long input_m(){
         long long m=0;
         while(m == 0){
-            cout << "inut number of values: ";
+            cout << "input number of values: ";
             cin >> m;
             if (m < 0){
                 m = 0;
             }
         }
         return m;
+    }
+    long long input_u_(){
+        long long u_=0;
+        while(u_ == 0){
+            cout << "input u_: ";
+            cin >> u_;
+            if (u_ < 0){
+                u_ = 0;
+            }
+        }
+        return u_;
+    }
+    long long input_a(){
+        long long a=0;
+        while(a == 0){
+            cout << "input a: ";
+            cin >> a;
+            if (a < 0){
+                a = 0;
+            }
+        }
+        return a;
     }
     long long gcd(long long a, long long b){
         long long t;
@@ -811,10 +833,9 @@ public:
     void logarithmMethod() {
         long long Y0=1, Y1, m, u_;
         double U0, X;
-        cout << "enter u_ > 0: ";
-        cin >> u_;
         NumberVector logarithmMethod_vector;
         long long a1, c1, m1;
+        u_ = input_u_();
         m = input_m();
         long long* parametr1[4] {&m1, &c1, &a1, &Y0};
         long long *enteredParametrs1 = enterParametr("LCM", 4);
@@ -844,9 +865,8 @@ public:
         NumberVector arensMethod_vector;
         long long a1, c1, m1;
         long long a2, c2, m2;
-        cout << "enter a > 0: ";
-        cin >> a;
         m = input_m();
+        a = input_a();
         long long* parametr1[4] {&m1, &c1, &a1, &Z0};
         long long *enteredParametrs1 = enterParametr("LCM", 4);
         long long* parametr2[4] {&m2, &c2, &a2, &H0};
