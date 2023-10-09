@@ -114,10 +114,10 @@ private:
 public:
     NumberVector()  {}
     void pushEvenlyValue(long long value, long long m){
-        vals_.push_back(static_cast<double>(value)/static_cast<double>(m));
+        vals_.push_back(static_cast<double>(value)/static_cast<double>(m-1));
     }
     void pushHundredEvenlyValue(long long value, long long m){
-        vals_.push_back(static_cast<double>(value)/static_cast<double>(m)*100);
+        vals_.push_back(static_cast<double>(value)/static_cast<double>(m-1)*100);
     }
     void pushValue(double value){
         vals_.push_back(value);
@@ -678,9 +678,9 @@ public:
         }
         for (int i = 0; i < m; ++i) {
             for(int i = 0; i < 12; ++i){
-                Y1 = LCM(m, Y0, a1, c1);
+                Y1 = LCM(m1, Y0, a1, c1);
                 Y0 = Y1;
-                selected_numbers[i] = static_cast<double>(Y1)/static_cast<double>(m-1);
+                selected_numbers[i] = static_cast<double>(Y1)/static_cast<double>(m1-1);
                 sum += selected_numbers[i];
             }
             
@@ -718,11 +718,11 @@ public:
         for(int i = 0; i < m/2 + numSkipped; ++i){
             
             Y2 = LCM(m1, Y0, a1, c1);
-            Y3 = LCM(m2, Y1, c2, a2);
+            Y3 = LCM(m2, Y1, a2, c2);
             Y0 = Y2;
             Y1 = Y3;
-            U1 = static_cast<double>(Y2)/static_cast<double>(m);
-            U2 = static_cast<double>(Y3)/static_cast<double>(m);
+            U1 = static_cast<double>(Y2)/static_cast<double>(m1-1);
+            U2 = static_cast<double>(Y3)/static_cast<double>(m2-1);
             V1 = 2*U1-1;
             V2 = 2*U2-1;
             S = V1*V1 + V2*V2;
@@ -769,14 +769,13 @@ public:
             Y3 = LCM(m2, Y1, a2, c2);
             Y0 = Y2;
             Y1 = Y3;
-            U1 = static_cast<double>(Y2)/static_cast<double>(m);
-            V1 = static_cast<double>(Y3)/static_cast<double>(m);
+            U1 = static_cast<double>(Y2)/static_cast<double>(m1-1);
             if(U1 == 0) {
                 numSkipped+=1;
                 continue;
                 
             }
-            V1 = static_cast<double>(Y3)/static_cast<double>(m);
+            V1 = static_cast<double>(Y3)/static_cast<double>(m2-1);
             X = sqrt(8.0/exp(1))*((V1-0.5)/U1);
             
             if(X*X <= (5-4*exp(0.25)*U1)){
@@ -825,7 +824,7 @@ public:
         for (int i = 1; i < m; ++i) {
             Y1 = LCM(m1, Y0, a1, c1);
             Y0 = Y1;
-            U0 = static_cast<double>(Y1)/static_cast<double>(m);
+            U0 = static_cast<double>(Y1)/static_cast<double>(m1-1);
             X = -u_*log(U0);
             logarithmMethod_vector.pushValue(X);
         }
@@ -859,7 +858,7 @@ public:
         for (int i = 1; i < m+numSkipped; ++i) {
             Z1 = LCM(m1, Z0, a1, c1);
             Z0 = Z1;
-            U0 = static_cast<double>(Z1)/static_cast<double>(m);
+            U0 = static_cast<double>(Z1)/static_cast<double>(m1-1);
             Y = tan(M_PI*U0);
             double extractedExpr = sqrt(2*a-1)*Y;
             X=extractedExpr+a-1;
@@ -869,7 +868,7 @@ public:
             }
             H1 = LCM(m2, H0, a2, c2);
             H0 = H1;
-            V0 = static_cast<double>(H1)/static_cast<double>(m);
+            V0 = static_cast<double>(H1)/static_cast<double>(m2-1);
             if (V0 > ((1+Y*Y)*exp((a-1)*log(X/(a-1))-extractedExpr*Y))){
                 numSkipped+=1;
                 continue;
