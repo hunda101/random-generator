@@ -807,10 +807,10 @@ public:
                 relationMethod_vector.pushValue(X);
                 continue;
             }
-            else if (X*X >= (((4*exp(-1.35))/U1)+1.4)){
+            if (X*X >= (((4*exp(-1.35))/U1)+1.4)){
                 numSkipped+=1;
                 continue;
-            }else if(X*X <= (-4*log(U1))){
+            }if(X*X <= (-4*log(U1))){
                 relationMethod_vector.pushValue(X);
                 
             }else{
