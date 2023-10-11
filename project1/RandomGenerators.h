@@ -158,7 +158,7 @@ public:
                 cout << "enter positive c: ";
                 
                 cin >> c;
-                if (c < 0 && c >= m){
+                if (c < 0 || c >= m){
                     c = 0;
                     continue;
                 }
@@ -174,7 +174,7 @@ public:
                 cout << "enter positive a: ";
                 cin >> a;
                 b = a - 1;
-                if (a < 0 && a >= m) {
+                if (a < 0 || a >= m) {
                     a = 0;
                     continue;
                 };
@@ -189,16 +189,19 @@ public:
                     }
                 }
                 if (a == 0) continue;
-                if(m % 4 == 0 && b % 4 != 0){
-                    cout << "a-1 is not multiple to 4 " << endl;
-                    a = 0;
+                if(m % 4 == 0){
+                    if( b % 4 != 0){
+                        cout << "a-1 is not multiple to 4 " << endl;
+                        a = 0;
+                    }
+                    
                 }
             }
             parametrs[2] = a;
             while (X0 == 0){
                 cout << "enter positive X0: ";
                 cin >> X0;
-                if (X0 < 0 && X0 >= m){
+                if (X0 < 0 || X0 >= m){
                     X0 = 0;
                     continue;
                 };
@@ -220,7 +223,7 @@ public:
                 cout << "enter positive c: ";
                 
                 cin >> c;
-                if (c < 0 && c >= m){
+                if (c < 0 || c >= m){
                     c = 0;
                     continue;
                 }
@@ -236,7 +239,7 @@ public:
                 cout << "enter positive a: ";
                 cin >> a;
                 b = a - 1;
-                if (a < 0 && a >= m) {
+                if (a < 0 || a >= m) {
                     a = 0;
                     continue;
                 };
@@ -255,14 +258,10 @@ public:
             while (d == 0){
                 cout << "enter positive d: ";
                 cin >> d;
-                if (d < 0){
+                if (d < 0 || d >= m){
                     d = 0;
                     continue;
                     
-                };
-                if (d < 0 && d >= m) {
-                    d = 0;
-                    continue;
                 };
                 tuple<long long *, long long> primes = generatePrimes(m, m);
                 long long *arr = get<0>(primes);
@@ -284,21 +283,21 @@ public:
                         continue;
                     }
                 }
-                else if(m % 2 == 0){
+                if(m % 2 == 0){
                     if(!is_compared(d, b, 2)){
                         cout << " число d = a–1 mod 2 , якщо число m є кратним 2; " << endl;
                         d = 0;
                         continue;
                     }
                 }
-                else if(m%3==0){
+                if(m%3==0){
                     if(is_compared(d, 3*c, 9)){
                         cout << "d != 3c mod 9, якщо число m є кратним 3" << endl;
                         d = 0;
                     }
                 }
-                parametrs[3] = d;
             }
+            parametrs[3] = d;
             while (X0 == 0){
                 cout << "enter positive X0: ";
                 cin >> X0;
@@ -323,7 +322,7 @@ public:
             while (a == 0){
                 cout << "input positive a: ";
                 cin >> a;
-                if(a < 0) {
+                if(a < 0 || a>= m) {
                     a = 0;
                     continue;
                 };
@@ -332,12 +331,16 @@ public:
             while (c == 0){
                 cout << "input positive c: ";
                 cin >> c;
+                if(c < 0 || c >= m) {
+                    c = 0;
+                    continue;
+                };
             }
             parametrs[2] = c;
             while (p == 0){
                 cout << "input positive p: ";
                 cin >> p;
-                if(p < 0) {
+                if(p < 0 ) {
                     p = 0;
                     continue;
                 };
@@ -350,7 +353,7 @@ public:
                         }
                         X0 = 1;
                     }
-                    
+                    p = 0;
                 }
             }
             parametrs[3] = p;
