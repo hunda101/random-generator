@@ -449,7 +449,7 @@ public:
         return a;
     }
     bool is_compared(long long d, long b, long long a){
-        return (b % gcd(d, a)) == 0;
+        return (d % gcd(b, a)) == 0;
     }
     bool is_prime(long long n){
         for(long long i=2;i<=sqrt(n);i++)
