@@ -117,7 +117,7 @@ public:
         vals_.push_back(static_cast<double>(value)/static_cast<double>(m-1));
     }
     void pushHundredEvenlyValue(long long value, long long m){
-        vals_.push_back(static_cast<double>(value)/static_cast<double>(m-1)*100);
+        vals_.push_back((static_cast<double>(value)/static_cast<double>(m-1))*100);
     }
     void pushValue(double value){
         vals_.push_back(value);
@@ -128,13 +128,12 @@ public:
     vector<double>::iterator begin() {
         return vals_.begin();
     }
-    
     vector<double>::iterator end() {
         return vals_.end();
     }
     void insert(long long position, vector<double> values) {
-            if (position <=  this->vals_.size()) {
-                this->vals_.insert(this->vals_.begin() + position, values.begin(), values.end());
+            if (position <= vals_.size()) {
+                vals_.insert(vals_.begin() + position, values.begin(), values.end());
             }
         }
     
@@ -145,7 +144,7 @@ public:
     long long * enterParametr(string Method, long long size){
         long long *parametrs = new long long[size];
         if (Method == "LCM"){
-            long long m = 0, c = 0, a = 0, X0 = 0, b;
+            long long m = 0, c = 0, a = 0, X0 = 0, b=0;
             while (m == 0){
                 cout << "enter positive m: ";
                 cin >> m;
@@ -215,19 +214,15 @@ public:
                 cout << "enter positive m: ";
                 cin >> m;
                 if (m < 0) m = 0;
-               
-                
             }
             parametrs[0] = m;
             while (c == 0){
                 cout << "enter positive c: ";
-                
                 cin >> c;
                 if (c < 0 || c >= m){
                     c = 0;
                     continue;
                 }
-                
                 if(gcd(m, c) != 1){
                     cout << "m and c is not relatively prime" << endl;
                     c = 0;
@@ -235,7 +230,6 @@ public:
             }
             parametrs[1] = c;
             while (a == 0){
-                
                 cout << "enter positive a: ";
                 cin >> a;
                 b = a - 1;
@@ -261,7 +255,6 @@ public:
                 if (d < 0 || d >= m){
                     d = 0;
                     continue;
-                    
                 };
                 tuple<long long *, long long> primes = generatePrimes(m, m);
                 long long *arr = get<0>(primes);
@@ -347,13 +340,14 @@ public:
                 if(!is_prime(p)){
                     if(p%2 == 0 ){
                         if(a%4 != 1 || c % 4 != 2){
-                            cout << "має період 2e-1, якщо a mod 4 = 1 і с mod 4 = 2." << endl;
+                            cout << "має період 2^(e-1), якщо a mod 4 = 1 і с mod 4 = 2." << endl;
                             p = 0;
                             continue;
                         }
                         X0 = 1;
                     }
                     p = 0;
+                    cout << "p must be prime" << endl;
                 }
             }
             parametrs[3] = p;
@@ -649,11 +643,10 @@ public:
     }
     
     void unionMethod() {
-        long long X0, Y0, X1, Y1, Z, m ;
+        long long X0, Y0, X1, Y1, Z;
         NumberVector unionMethod_vector;
         long long a1, c1, m1;
         long long a2, c2, m2;
-        m = input_m();
         long long* parametr1[4] {&m1, &c1, &a1, &X0};
         long long *enteredParametrs1 = enterParametr("LCM", 4);
         long long* parametr2[4] {&m2, &c2, &a2, &Y0};
@@ -662,20 +655,20 @@ public:
             *parametr1[i] = enteredParametrs1[i];
             *parametr2[i] = enteredParametrs2[i];
         }
-        for (int i = 0; i < m; ++i) {
+        for (int i = 0; i < m1; ++i) {
             X1 = LCM(m1, X0, a1, c1);
             X0 = X1;
             Y1 = LCM(m2, Y0, a2, c2);
             Y0 = Y1;
             Z = (X1 - Y1);
             if(Z<0)
-                Z+=m;
+                Z+=m1;
             
-            Z%=m;
+            Z%=m1;
             
-            unionMethod_vector.pushHundredEvenlyValue(Z, m);
+            unionMethod_vector.pushHundredEvenlyValue(Z, m1);
         }
-        vector<Interval> vals = calcFrequency(unionMethod_vector, m, IntervalEdges(0, 100, 10, true, true));
+        vector<Interval> vals = calcFrequency(unionMethod_vector, m1, IntervalEdges(0, 100, 10, true, true));
         printResult(vector<vector<Interval>>{vals});
     }
 };
