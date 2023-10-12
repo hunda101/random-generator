@@ -460,20 +460,20 @@ public:
     long long FNM(long long m, long long X1, long long X2 ){
         return (X1 + X2)%m;
     }
-    long long mod_inv(long long param, long long m)
+    long long mod_inv(long long param, long long p)
     {
-        long long b0 = m, t, q;
+        long long b0 = p, t, q;
         long long x0 = 0, x1 = 1;
         if(param==0) return INT_MAX;
         else if(param == INT_MAX) return 0 ;
-        if (m == 1) return 1;
+        if (p == 1) return 1;
         
         while (param > 1)
         {
-            if(m == 0 ) break;
-            q = param / m;
-            t = m;
-            m = param % m;
+            if(p == 0 ) break;
+            q = param / p;
+            t = p;
+            p = param % p;
             
             param = t;
             t = x0;
@@ -484,10 +484,10 @@ public:
         return x1;
     }
     
-    long long ICM(long long m, long long a, long long c, long long param)
+    long long ICM(long long p, long long a, long long c, long long param)
     {
-        long long xn =(a * mod_inv(param, m) + c) % m;
-        if(xn > m-1) xn = INT_MAX;
+        long long xn =(a * mod_inv(param, p) + c) % p;
+        if(xn > p-1) xn = INT_MAX;
         return xn;
     }
     vector<Interval> makeSubInterval(vector<Interval> interval, double left_edge, double right_edge){
@@ -497,12 +497,10 @@ public:
                 while(!interval[i-1].includes(right_edge-numeric_limits<double>::min())){
                     sub_interval.push_back(interval[i]);
                     i+=1;
-                    
                 };
                 break;
             }
         }
-        
         return sub_interval;
     }
     vector<Interval> calcFrequency(NumberVector result, long long m, IntervalEdges edges){
@@ -571,7 +569,7 @@ public:
         long long X0, X1, m, c, a, d;
         NumberVector quadraticCongruentialMethod_vector;
         
-        long long* parametr[5] {&m, &c, &d, &a, &X0};
+        long long* parametr[5] {&m, &c, &a, &d, &X0};
         long long *enteredParametrs = enterParametr("QCM", 5);
         quadraticCongruentialMethod_vector.pushHundredEvenlyValue(X0, m);
         for(int i = 0; i <= 4; ++i){
@@ -655,6 +653,10 @@ public:
             *parametr1[i] = enteredParametrs1[i];
             *parametr2[i] = enteredParametrs2[i];
         }
+        while (m2 > m1){
+            cout << "input m2 <= m1";
+            cin >> m2;
+        }
         for (int i = 0; i < m1; ++i) {
             X1 = LCM(m1, X0, a1, c1);
             X0 = X1;
@@ -682,9 +684,9 @@ public:
     
     void sigmaMethod() {
         double X0;
-        long long Y0 = 1, Y1, m;
+        long long Y0 = 0, Y1, m;
         NumberVector sigmaMethod_vector;
-        array<double, 12> selected_numbers;
+        double selected_numbers [12];
         double sum=0;
         long long a1, c1, m1;
         
@@ -718,7 +720,7 @@ class PolarMethod: public GeneratorBase{
 public:
     PolarMethod(){}
     void polarMehod(){
-        long long Y0 = 1, Y1 = 2, Y2, Y3, numSkipped= 0, m ;
+        long long Y0 = 0, Y1 = 0, Y2, Y3, numSkipped= 0, m ;
         double S,U1 ,U2, V1, V2, X1, X2;
         NumberVector polarMethod_vector;
         long long a1, c1, m1;
@@ -744,7 +746,7 @@ public:
             V1 = 2*U1-1;
             V2 = 2*U2-1;
             S = V1*V1 + V2*V2;
-            if(S > 1){
+            if(S >= 1){
                 numSkipped+=1;
                 continue;
             };
@@ -831,8 +833,8 @@ public:
         double U0, X;
         NumberVector logarithmMethod_vector;
         long long a1, c1, m1;
-        u_ = input_u_();
         m = input_m();
+        u_ = input_u_();
         long long* parametr1[4] {&m1, &c1, &a1, &Y0};
         long long *enteredParametrs1 = enterParametr("LCM", 4);
         for(int i = 0; i <= 3; ++i){
@@ -885,7 +887,7 @@ public:
             H1 = LCM(m2, H0, a2, c2);
             H0 = H1;
             V0 = static_cast<double>(H1)/static_cast<double>(m2-1);
-            if (V0 > ((1+Y*Y)*exp((a-1)*log(X/(a-1))-extractedExpr*Y))){
+            if (V0 > ((1+Y*Y)*exp((a-1)*log(X/(a-1))-(extractedExpr*Y)))){
                 numSkipped+=1;
                 continue;
             }
