@@ -12,7 +12,7 @@
 #include <climits>
 #include <array>
 #include <tuple>
-# define M_PI           3.14159265358979323846  /* pi */
+#define M_PI           3.14159265358979323846  /* pi */
 using namespace std;
 namespace randgenerator {
 struct Interval {
@@ -338,13 +338,14 @@ public:
                     continue;
                 };
                 if(!is_prime(p)){
-                    if(p%2 == 0 ){
+                    if(is_power_two(p) && p >= 8){
                         if(a%4 != 1 || c % 4 != 2){
                             cout << "має період 2^(e-1), якщо a mod 4 = 1 і с mod 4 = 2." << endl;
                             p = 0;
                             continue;
                         }
                         X0 = 1;
+                        continue;
                     }
                     p = 0;
                     cout << "p must be prime" << endl;
@@ -450,6 +451,12 @@ public:
             if(n%i==0)
                 return false;
         return true;
+    }
+    bool is_power_two(long long num){
+        for(int i = 1; i <= num; i*=2){
+            if( i == num) return true;
+        }
+        return false;
     }
     long long LCM(long long m, long long X0, long long a, long long c){
         return (a*X0 +c) % m;
